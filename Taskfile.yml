@@ -1,12 +1,12 @@
 version: '3'
 vars:
   HOME_DIR: '${HOME}'
-  INIT_DATA_DIR: '{{.HOME}}/Development/Java/microservices/backend/data'
-  USER_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/user-service'
-  UMBRELLA_DIR: '{{.HOME}}/Development/Java/microservices/backend/umbrella-service'
-  INCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/income-service'
-  OUTCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/outcome-service'
-  GATEWAY_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/api-gateway'
+  INIT_DATA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/data'
+  USER_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/user-service'
+  UMBRELLA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/umbrella-service'
+  INCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/income-service'
+  OUTCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/outcome-service'
+  GATEWAY_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/api-gateway'
 
 tasks:
   clean-docker:

@@ -5,6 +5,7 @@ networks:
     backend-network:
         driver: bridge
 
+
 services:
   postgres-db-service:
     image: ${DB_IMAGE_VERSION:-postgres:16.1}

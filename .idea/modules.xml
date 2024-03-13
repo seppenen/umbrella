@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/umbrella.iml" filepath="$PROJECT_DIR$/umbrella.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/umbrella-service/umbrella-service.iml" filepath="$PROJECT_DIR$/backend/umbrella-service/umbrella-service.iml" />
     </modules>
   </component>
 </project>

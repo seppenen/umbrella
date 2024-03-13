@@ -9,7 +9,6 @@ import java.util.List;
 
 @Component
 public class UserServiceClient {
-
     private final RestClient userServerClient;
 
     /**
