@@ -1,0 +1,70 @@
+version: '3'
+vars:
+  HOME_DIR: '${HOME}'
+  INIT_DATA_DIR: '{{.HOME}}/Development/Java/microservices/backend/data'
+  USER_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/user-service'
+  UMBRELLA_DIR: '{{.HOME}}/Development/Java/microservices/backend/umbrella-service'
+  INCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/income-service'
+  OUTCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/outcome-service'
+  GATEWAY_SERVICE_DIR: '{{.HOME}}/Development/Java/microservices/backend/api-gateway'
+
+tasks:
+  clean-docker:
+    cmds:
+      - echo "Stopping all running containers..."
+      - docker ps -q | xargs -r docker stop || echo "No running containers found."
+      - echo "Removing all stopped containers..."
+      - docker ps -a -q | xargs -r docker rm || echo "No containers to remove."
+      - echo "Removing all images..."
+      - docker images -q | xargs -r docker rmi -f || echo "No images to remove."
+  clean-build:
+    cmds:
+      - echo "Removing target directory in {{.TARGET_DIR}}"
+      - rm -rf {{.TARGET_DIR}}
+  build:
+    cmds:
+    - echo "Building in {{.BUILD_DIR}}"
+    - cd {{.BUILD_DIR}} && mvn clean package -DskipTests
+
+  empty-database:
+    cmds:
+      - echo "Removing all data from the database..."
+      - docker rm -f postgres && docker-compose up -d postgres-db-service
+
+  create-database:
+    cmds:
+      - echo "Creating new DB"
+      - docker-compose up -d postgres-db-service
+
+  build-all:
+    cmds:
+      - task: clean-docker
+      - task: build
+        vars: {BUILD_DIR: '{{.USER_SERVICE_DIR}}'}
+      - task: build
+        vars: { BUILD_DIR: '{{.UMBRELLA_DIR}}' }
+      - task: build
+        vars: { BUILD_DIR: '{{.INCOME_SERVICE_DIR}}' }
+      - task: build
+        vars: { BUILD_DIR: '{{.OUTCOME_SERVICE_DIR}}' }
+      - task: build
+        vars: { BUILD_DIR: '{{.GATEWAY_SERVICE_DIR}}' }
+      - task: create-database
+      - docker-compose up -d
+
+
+  up:
+    cmds:
+      - task: build-all
+
+
+  default:
+    cmds:
+      - |
+        echo "Usage: 
+          task up - Performs all the clean, build and setup tasks.
+          task clean-docker - Stops and removes all Docker containers and images. 
+          task empty-database - Removes all data. 
+          task create-database - Create new db."
+  
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteTargetsManager">
+    <targets>
+      <target name="umbrella-service" type="docker-compose" uuid="395185d1-909b-4e62-9861-e15585c7e8ec">
+        <config>
+          <option name="targetPlatform">
+            <TargetPlatform />
+          </option>
+          <option name="configurationFiles">
+            <list>
+              <option value="$PROJECT_DIR$/docker-compose.yml" />
+            </list>
+          </option>
+          <option name="serviceName" value="umbrella-service" />
+        </config>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config>
+            <option name="agentFolder">
+              <VolumeState>
+                <option name="remotePath" value="-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n" />
+              </VolumeState>
+            </option>
+            <option name="homePath" value="/opt/openjdk-17" />
+            <option name="javaVersionString" value="17-ea" />
+          </config>
+        </ContributedStateBase>
+      </target>
+    </targets>
+  </component>
+</project>

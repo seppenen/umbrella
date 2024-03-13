@@ -1,0 +1,4 @@
+
+DROP DATABASE IF EXISTS spring_db;
+CREATE DATABASE spring_db;
+

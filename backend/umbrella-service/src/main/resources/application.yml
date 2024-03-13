@@ -1,0 +1,14 @@
+
+
+# SpringDoc Configuration
+springdoc:
+  swagger-ui:
+    configUrl: /v3/api-docs/swagger-config
+    url: /v3/api-docs
+    urls:
+      - name: umbrella-service
+        url: /v3/api-docs
+      - name: user-service
+        url: http://localhost:8082/v3/api-docs
+      - name: spring-data-jpa
+        url: http://localhost:8081/v3/api-docs
