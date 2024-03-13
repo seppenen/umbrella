@@ -1,4 +1,4 @@
-package org.umbrella.advisers;
+package com.service.userService.advicers;
 
 /**
  * Author: Aleksandr Seppenen
@@ -6,7 +6,10 @@ package org.umbrella.advisers;
  * Version: 1.0
  */
 
-
+import com.service.userService.entity.ApiErrorResponse;
+import com.service.userService.exceptions.UserRegistrationFailedException;
+import com.service.userService.service.LoggerService;
+import com.service.userService.utils.ApiErrorFactory;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,9 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.umbrella.entity.ApiErrorResponse;
-import org.umbrella.service.LoggerService;
-import org.umbrella.utils.ApiErrorFactory;
 
 
 @ControllerAdvice
@@ -59,6 +59,21 @@ public class ExceptionHandlers {
         );
     }
 
+    /**
+     * Handles a UserRegistrationFailedException and returns an appropriate API response.
+     *
+     * @param ex The UserRegistrationFailedException object representing the exception.
+     * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
+     */
+    @ExceptionHandler(UserRegistrationFailedException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserRegistrationFailedException(UserRegistrationFailedException ex) {
+        return handleExceptionAndResponse(
+                ex,
+                RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION,
+                "Server error occurred",
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
 
     /**
      * Handles an EntityNotFoundException and returns an appropriate API response.
