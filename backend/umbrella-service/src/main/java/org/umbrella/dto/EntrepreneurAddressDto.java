@@ -1,4 +1,4 @@
-package org.umbrella.umbrella.dto;
+package org.umbrella.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
-package org.umbrella.umbrella.service;
+package org.umbrella.service;
 
-import org.umbrella.umbrella.dto.EntrepreneurDto;
-import org.umbrella.umbrella.entity.EntrepreneurEntity;
+import org.umbrella.entity.EntrepreneurEntity;
+import org.umbrella.dto.EntrepreneurDto;
 
 import java.util.List;
 

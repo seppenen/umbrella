@@ -1,4 +1,4 @@
-package org.umbrella.umbrella;
+package org.umbrella;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.umbrella.umbrella.dto.EntrepreneurDto;
-import org.umbrella.umbrella.dto.UserResponseDto;
-import org.umbrella.umbrella.service.EntrepreneurServiceInterface;
+import org.umbrella.dto.UserResponseDto;
+import org.umbrella.dto.EntrepreneurDto;
+import org.umbrella.service.EntrepreneurServiceInterface;
 
 import java.util.List;
 

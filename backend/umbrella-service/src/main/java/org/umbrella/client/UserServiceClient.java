@@ -1,9 +1,9 @@
-package org.umbrella.umbrella.client;
+package org.umbrella.client;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import org.umbrella.umbrella.dto.UserRequestDto;
+import org.umbrella.dto.UserRequestDto;
 
 import java.util.List;
 

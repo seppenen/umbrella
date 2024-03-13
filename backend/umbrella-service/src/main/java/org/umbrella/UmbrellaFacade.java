@@ -1,10 +1,10 @@
-package org.umbrella.umbrella;
+package org.umbrella;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
-import org.umbrella.umbrella.client.UserServiceClient;
-import org.umbrella.umbrella.dto.UserRequestDto;
-import org.umbrella.umbrella.dto.UserResponseDto;
+import org.umbrella.client.UserServiceClient;
+import org.umbrella.dto.UserRequestDto;
+import org.umbrella.dto.UserResponseDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

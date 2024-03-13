@@ -1,4 +1,4 @@
-package org.umbrella.umbrella;
+package org.umbrella;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;

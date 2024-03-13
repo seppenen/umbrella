@@ -1,4 +1,4 @@
-package org.umbrella.umbrella.entity;
+package org.umbrella.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ public class TransactionsEntity {
 
     @ManyToOne
     @JoinColumn(name = "entrepreneur_id")
-    private EntrepreneurEntity entrepreneurEntity;
+    private EntrepreneurEntity entrepreneur;
 
     //TODO: Add more fields
 }

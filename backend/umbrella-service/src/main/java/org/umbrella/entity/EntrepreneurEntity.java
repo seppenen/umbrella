@@ -1,4 +1,4 @@
-package org.umbrella.umbrella.entity;
+package org.umbrella.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -39,7 +39,7 @@ public class EntrepreneurEntity {
     @JoinColumn(name = "address_id")
     private EntrepreneurAddressEntity address;
 
-    @OneToMany(mappedBy = "entrepreneurEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "entrepreneur", cascade = CascadeType.ALL)
     private List<TransactionsEntity> transactions;
 
 

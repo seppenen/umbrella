@@ -1,4 +1,4 @@
-package org.umbrella.umbrella.dto;
+package org.umbrella.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserResponseDto {
+public class UserRequestDto {
     private Long id;
     private String name;
     private String email;

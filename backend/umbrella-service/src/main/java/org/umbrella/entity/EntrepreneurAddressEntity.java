@@ -1,4 +1,4 @@
-package org.umbrella.umbrella.entity;
+package org.umbrella.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
