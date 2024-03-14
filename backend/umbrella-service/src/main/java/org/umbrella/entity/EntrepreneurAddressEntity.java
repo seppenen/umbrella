@@ -16,7 +16,7 @@ import lombok.Setter;
 public class EntrepreneurAddressEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String street;
     private String city;
@@ -24,6 +24,7 @@ public class EntrepreneurAddressEntity {
     private String country;
     @OneToOne(mappedBy = "address")
     private EntrepreneurEntity entrepreneurs;
+
 
 
 }
