@@ -31,6 +31,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
 
+    /**
+     * Performs the filter operation for each incoming request.
+     * If the request header does not contain a valid Authorization token, the filter chain is continued.
+     * If the request header contains a valid Authorization token:
+     *   - The token is validated using the jwtService.validateToken method.
+     *   - If the token is valid, the user is authenticated using the authenticateWithToken method.
+     *   - The filter chain is continued.
+     *   - If the token is invalid, the JwtException is logged using the loggerService.logError method and an JwtException is thrown.
+     *
+     * @param request The incoming HttpServletRequest.
+     * @param response The outgoing HttpServletResponse.
+     * @param filterChain The FilterChain to continue the filter flow.
+     * @throws ServletException If an error occurs while processing the request.
+     * @throws IOException If an error occurs while processing the request.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
             String header = request.getHeader("Authorization");

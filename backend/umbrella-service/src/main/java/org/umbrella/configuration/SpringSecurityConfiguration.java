@@ -26,6 +26,13 @@ public class SpringSecurityConfiguration {
 
     }
 
+    /**
+     * Configures and returns a SecurityFilterChain for the given HttpSecurity.
+     *
+     * @param http the HttpSecurity object to configure
+     * @return the configured SecurityFilterChain
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

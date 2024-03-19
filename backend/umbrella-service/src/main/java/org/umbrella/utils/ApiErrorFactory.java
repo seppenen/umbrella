@@ -31,6 +31,13 @@ public class ApiErrorFactory {
         return errorResponse;
     }
 
+    /**
+     * Writes an error response to the HttpServletResponse.
+     *
+     * @param response       The HttpServletResponse object.
+     * @param authException  The AuthenticationException that occurred.
+     * @throws IOException   If an error occurs while writing the response.
+     */
     public void writeResponseError(HttpServletResponse response,
                                     AuthenticationException authException) throws IOException {
         ApiErrorResponse apiErrorResponse = create(
