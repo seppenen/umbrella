@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.umbrella.entity.ApiErrorResponse;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 public class ApiErrorFactory {
@@ -22,7 +22,7 @@ public class ApiErrorFactory {
         errorResponse.setErrorCode(status.value());
         errorResponse.setMessage(message);
         errorResponse.setDetail(detail);
-        errorResponse.setTimeStamp(LocalDateTime.now());
+        errorResponse.setTimeStamp(new Date());
         return errorResponse;
     }
 }

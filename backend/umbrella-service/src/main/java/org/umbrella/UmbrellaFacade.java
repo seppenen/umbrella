@@ -60,9 +60,9 @@ public class UmbrellaFacade {
      * @return the created EntrepreneurDto object
      */
     public EntrepreneurDto createAndReturnEntrepreneur(EntrepreneurDto entrepreneurDtoToCreate) {
-        EntrepreneurEntity entityForCreation = mapToSingleEntity(entrepreneurDtoToCreate, EntrepreneurEntity.class);
-        EntrepreneurEntity createdEntity = entrepreneurService.persistEntrepreneurEntity(entityForCreation);
-        return mapToSingleDto(createdEntity, EntrepreneurDto.class);
+        EntrepreneurEntity entityToPersist = mapToSingleEntity(entrepreneurDtoToCreate, EntrepreneurEntity.class);
+        EntrepreneurEntity persistedEntity = entrepreneurService.persistEntrepreneurEntity(entityToPersist);
+        return mapToSingleDto(persistedEntity, EntrepreneurDto.class);
     }
 
     public void deleteEntrepreneur(Long id) {

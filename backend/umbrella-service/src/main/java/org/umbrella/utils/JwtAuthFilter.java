@@ -1,5 +1,6 @@
 package org.umbrella.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,16 +47,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
         } catch (Exception ex) {
-            ApiErrorResponse apiErrorResponse = apiErrorFactory.create(
-                    HttpStatus.UNAUTHORIZED,
-                    ex.getMessage(),
-                    "The provided token is not valid");
+            ApiErrorResponse apiErrorResponse = apiErrorFactory.create(HttpStatus.UNAUTHORIZED, ex.getMessage(), "The provided token is not valid");
 
-            StringBuilder errorResponse = new StringBuilder();
-            errorResponse.append(apiErrorResponse);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String errorResponse = objectMapper.writeValueAsString(apiErrorResponse);
+
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(errorResponse.toString());
+            response.getWriter().write(errorResponse);
             return;
         }
 
