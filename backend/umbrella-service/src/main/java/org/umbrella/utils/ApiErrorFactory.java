@@ -31,7 +31,7 @@ public class ApiErrorFactory {
         return errorResponse;
     }
 
-    public void writeAuthException(HttpServletResponse response,
+    public void writeResponseError(HttpServletResponse response,
                                     AuthenticationException authException) throws IOException {
         ApiErrorResponse apiErrorResponse = create(
                 HttpStatus.UNAUTHORIZED,

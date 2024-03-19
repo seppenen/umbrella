@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -46,8 +45,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 authenticateWithToken(token);
                 filterChain.doFilter(request, response);
             } catch (JwtException e) {
-                apiErrorFactory.writeAuthException(response, new AuthenticationException(INVALID_TOKEN) {});
                 loggerService.logError(e, HttpStatus.UNAUTHORIZED);
+                throw new JwtException(INVALID_TOKEN);
             }
     }
 

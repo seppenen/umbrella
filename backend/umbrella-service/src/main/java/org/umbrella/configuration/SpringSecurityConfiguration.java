@@ -1,5 +1,6 @@
 package org.umbrella.configuration;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.umbrella.utils.ApiErrorFactory;
 import org.umbrella.utils.JwtAuthFilter;
 
 @Configuration
@@ -16,9 +18,12 @@ import org.umbrella.utils.JwtAuthFilter;
 public class SpringSecurityConfiguration {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final ApiErrorFactory apiErrorFactory;
 
-    public SpringSecurityConfiguration(JwtAuthFilter jwtAuthFilter) {
+    public SpringSecurityConfiguration(JwtAuthFilter jwtAuthFilter, ApiErrorFactory apiErrorFactory) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.apiErrorFactory = apiErrorFactory;
+
     }
 
     @Bean
@@ -33,9 +38,15 @@ public class SpringSecurityConfiguration {
                         )
                         .permitAll()
                         .requestMatchers("api/v1/**").authenticated()
-
                 )
-                .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling((exceptionHandling) -> exceptionHandling
+                        .authenticationEntryPoint((request, response, authException) ->
+                                apiErrorFactory.writeResponseError(response, authException))
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN))
+                );
         return http.build();
     }
+
 }

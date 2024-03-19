@@ -7,7 +7,7 @@ package org.umbrella.advicers;
  */
 
 
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -40,8 +40,8 @@ public class ExceptionHandlers {
         this.apiErrorFactory = apiErrorFactory;
     }
 
-    @ExceptionHandler(JwtException.class)
-    public void processRuntimeException(JwtException ex) {
+    @ExceptionHandler(ExpiredJwtException.class)
+    public void processRuntimeException(ExpiredJwtException ex) {
         loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
