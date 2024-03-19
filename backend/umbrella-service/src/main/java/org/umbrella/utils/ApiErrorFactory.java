@@ -1,9 +1,14 @@
 package org.umbrella.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.umbrella.entity.ApiErrorResponse;
 
+import java.io.IOException;
 import java.util.Date;
 
 @Service
@@ -16,7 +21,7 @@ public class ApiErrorFactory {
      * @param detail  The detailed description of the error.
      * @return An instance of ApiErrorResponse.
      */
-    public static ApiErrorResponse create(HttpStatus status, String message, String detail) {
+    public ApiErrorResponse create(HttpStatus status, String message, String detail) {
         ApiErrorResponse errorResponse = new ApiErrorResponse();
         errorResponse.setStatus(status);
         errorResponse.setErrorCode(status.value());
@@ -24,6 +29,18 @@ public class ApiErrorFactory {
         errorResponse.setDetail(detail);
         errorResponse.setTimeStamp(new Date());
         return errorResponse;
+    }
+
+    public void writeAuthException(HttpServletResponse response,
+                                    AuthenticationException authException) throws IOException {
+        ApiErrorResponse apiErrorResponse = create(
+                HttpStatus.UNAUTHORIZED,
+                authException.getMessage(),
+                null);
+        String jsonErrorResponse = new ObjectMapper().writeValueAsString(apiErrorResponse);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(jsonErrorResponse);
     }
 }
 

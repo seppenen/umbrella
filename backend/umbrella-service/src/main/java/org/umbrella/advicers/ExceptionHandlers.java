@@ -7,6 +7,7 @@ package org.umbrella.advicers;
  */
 
 
+import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,18 +31,25 @@ public class ExceptionHandlers {
     public static final String RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION = "Failed to register user";
 
     private final LoggerService loggerService;
-
+    private final ApiErrorFactory apiErrorFactory;
 
     @Autowired
-    public ExceptionHandlers(LoggerService loggerService) {
+    public ExceptionHandlers(LoggerService loggerService, ApiErrorFactory apiErrorFactory) {
         this.loggerService = loggerService;
 
+        this.apiErrorFactory = apiErrorFactory;
     }
 
-    @ExceptionHandler(Exception.class)
-    public void processRuntimeException(Exception ex) {
+    @ExceptionHandler(JwtException.class)
+    public void processRuntimeException(JwtException ex) {
         loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public void processRuntimeException(RuntimeException ex) {
+        loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
     /**
      * Handles the HttpMessageNotReadableException and returns an appropriate API response.
@@ -92,7 +100,7 @@ public class ExceptionHandlers {
             String detail,
             HttpStatus status
     ) {
-        ApiErrorResponse apiErrorResponse = ApiErrorFactory.create(status, message, detail);
+        ApiErrorResponse apiErrorResponse = apiErrorFactory.create(status, message, detail);
         loggerService.logError(ex, status);
         return new ResponseEntity<>(apiErrorResponse, new HttpHeaders(), status);
     }

@@ -10,5 +10,5 @@ springdoc:
         url: /v3/api-docs
       - name: user-service
         url: http://localhost:8082/v3/api-docs
-
-
+    oauth:
+      use-basic-authentication-with-access-code-grant:

@@ -40,10 +40,9 @@ public class UmbrellaEndpoints {
 
     @PostMapping("/refresh-token/{uuid}")
     public ResponseEntity<String> refreshToken(@PathVariable String uuid) {
-
         //TODO: Implement the logic to refresh the token
-        String token = jwtService.GenerateToken("0000");
-        return ResponseEntity.ok(token);
+       String token = jwtService.GenerateToken("0000");
+       return ResponseEntity.ok(token);
     }
 
     /**

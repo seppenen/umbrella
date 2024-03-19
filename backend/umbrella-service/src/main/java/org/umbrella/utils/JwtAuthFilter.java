@@ -1,16 +1,17 @@
 package org.umbrella.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.umbrella.entity.ApiErrorResponse;
+import org.umbrella.service.LoggerService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,10 +19,16 @@ import java.util.ArrayList;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+    private static final String BEARER = "Bearer ";
+    private static final String INVALID_TOKEN = "Invalid token";
 
     private final JwtService jwtService;
-    public JwtAuthFilter(JwtService jwtService) {
+    private final LoggerService loggerService;
+    private final ApiErrorFactory apiErrorFactory;
+    public JwtAuthFilter(JwtService jwtService, LoggerService loggerService, ApiErrorFactory apiErrorFactory) {
         this.jwtService = jwtService;
+        this.loggerService = loggerService;
+        this.apiErrorFactory = apiErrorFactory;
     }
 
 
@@ -29,31 +36,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
             String header = request.getHeader("Authorization");
 
-            if (header == null || !header.startsWith("Bearer ")) {
+            if (header == null || !header.startsWith(BEARER)) {
                 filterChain.doFilter(request, response);
                 return;
             }
             String token = header.replace("Bearer ","");
-        try {
-            jwtService.validateToken(token);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(null, token, new ArrayList<>());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (Exception ex) {
-                writeAuthException(response, HttpServletResponse.SC_UNAUTHORIZED, "Error authenticating: ");
-            return;
-        }
-
-            filterChain.doFilter(request, response);
-        }
-
-    private void writeAuthException(HttpServletResponse response, int status, String errorMessage) throws IOException {
-        ApiErrorResponse apiErrorResponse = ApiErrorFactory.create(HttpStatus.UNAUTHORIZED, errorMessage, "The provided token is not valid");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String errorResponse = objectMapper.writeValueAsString(apiErrorResponse);
-
-        response.setContentType("application/json");
-        response.setStatus(status);
-        response.getWriter().write(errorResponse);
+            try {
+                jwtService.validateToken(token);
+                authenticateWithToken(token);
+                filterChain.doFilter(request, response);
+            } catch (JwtException e) {
+                apiErrorFactory.writeAuthException(response, new AuthenticationException(INVALID_TOKEN) {});
+                loggerService.logError(e, HttpStatus.UNAUTHORIZED);
+            }
     }
 
+    private void authenticateWithToken(String token) {
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(null, token, new ArrayList<>());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
 }

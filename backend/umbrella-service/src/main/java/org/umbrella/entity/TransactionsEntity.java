@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -28,7 +28,8 @@ public class TransactionsEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String fromAccount;
-    private LocalDate date;
+    private String toAccount;
+    private Date date;
     private BigDecimal amount;
     private String status;
 
