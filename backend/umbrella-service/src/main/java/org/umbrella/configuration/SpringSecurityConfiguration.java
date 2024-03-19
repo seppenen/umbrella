@@ -1,4 +1,4 @@
-package org.umbrella.Configuration;
+package org.umbrella.configuration;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;

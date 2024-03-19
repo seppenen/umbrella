@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.umbrella.dto.EntrepreneurDto;
 import org.umbrella.dto.UserResponseDto;
-import org.umbrella.service.EntrepreneurServiceInterface;
 import org.umbrella.utils.JwtService;
 
 import java.util.List;
@@ -21,12 +20,12 @@ public class UmbrellaEndpoints {
 
     private final UmbrellaFacade umbrellaFacade;
     private final JwtService jwtService;
-    private final EntrepreneurServiceInterface entrepreneurService;
 
-    public UmbrellaEndpoints(UmbrellaFacade umbrellaFacade, JwtService jwtService, EntrepreneurServiceInterface entrepreneurService) {
+
+    public UmbrellaEndpoints(UmbrellaFacade umbrellaFacade, JwtService jwtService) {
         this.umbrellaFacade = umbrellaFacade;
         this.jwtService = jwtService;
-        this.entrepreneurService = entrepreneurService;
+
     }
 
     /**
@@ -36,8 +35,7 @@ public class UmbrellaEndpoints {
      */
     @GetMapping("/getAllUsers")
     public ResponseEntity<List<UserResponseDto>> fetchUsersFromUserService() {
-        List<UserResponseDto> userServiceUsers = umbrellaFacade.getUsersFromUserService();
-        return ResponseEntity.ok(userServiceUsers);
+        return ResponseEntity.ok(umbrellaFacade.getUsersFromUserService());
     }
 
     @PostMapping("/refresh-token/{uuid}")
@@ -54,9 +52,9 @@ public class UmbrellaEndpoints {
      * @param id the ID of the entrepreneur to be removed
      * @return a ResponseEntity with no content
      */
-    @DeleteMapping("/entrepreneurs/{id}")
-    public ResponseEntity removeEntrepreneurByID(@PathVariable Long id) {
-        entrepreneurService.deleteEntrepreneur(id);
+    @DeleteMapping("/entrepreneur/{id}")
+    public ResponseEntity<Void> deleteEntrepreneur(@PathVariable("id") Long entrepreneurId) {
+        umbrellaFacade.deleteEntrepreneur(entrepreneurId);
         return ResponseEntity.noContent().build();
     }
 
@@ -68,7 +66,7 @@ public class UmbrellaEndpoints {
      */
     @GetMapping("/entrepreneurs/{id}")
     public ResponseEntity<EntrepreneurDto> getEntrepreneur(@PathVariable Long id) {
-        var result = entrepreneurService.getEntrepreneur(id);
+       EntrepreneurDto result = umbrellaFacade.getEntrepreneur(id);
         return ResponseEntity.ok(result);
     }
 
@@ -79,7 +77,7 @@ public class UmbrellaEndpoints {
      */
     @GetMapping("/entrepreneurs")
     public ResponseEntity<List<EntrepreneurDto>> getEntrepreneurs() {
-        var result = entrepreneurService.getEntrepreneurs();
+        var result = umbrellaFacade.getEntrepreneurs();
         return ResponseEntity.ok(result);
     }
 
@@ -89,10 +87,10 @@ public class UmbrellaEndpoints {
      * @param entrepreneurDto the EntrepreneurDto object representing the entrepreneur to be created
      * @return a ResponseEntity containing the created EntrepreneurDto object
      */
-    @PostMapping("/entrepreneurs")
-    public ResponseEntity<EntrepreneurDto> createEntrepreneur(@RequestBody EntrepreneurDto entrepreneurDto) {
-        var result = entrepreneurService.createEntrepreneur(entrepreneurDto);
-        return ResponseEntity.ok(result);
+    @PostMapping("/entrepreneur")
+    public ResponseEntity<EntrepreneurDto> createEntrepreneurEntity(@RequestBody EntrepreneurDto entrepreneurDto) {
+        EntrepreneurDto createdEntrepreneur = umbrellaFacade.createAndReturnEntrepreneur(entrepreneurDto);
+        return ResponseEntity.ok(createdEntrepreneur);
     }
 
     /**

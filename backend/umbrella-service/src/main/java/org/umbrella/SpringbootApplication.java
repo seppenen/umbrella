@@ -16,5 +16,4 @@ public class SpringbootApplication {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
-
 }

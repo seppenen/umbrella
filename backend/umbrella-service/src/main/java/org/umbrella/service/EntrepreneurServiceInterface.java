@@ -1,17 +1,16 @@
 package org.umbrella.service;
 
 import org.umbrella.entity.EntrepreneurEntity;
-import org.umbrella.dto.EntrepreneurDto;
 
 import java.util.List;
 
 public interface EntrepreneurServiceInterface {
 
-    EntrepreneurDto createEntrepreneur(EntrepreneurDto entrepreneur);
-    List<EntrepreneurDto> getEntrepreneurs();
-    EntrepreneurDto getEntrepreneur(Long id);
-    EntrepreneurDto updateEntrepreneur(EntrepreneurEntity entrepreneur);
-    EntrepreneurEntity deleteEntrepreneur(Long id);
+    EntrepreneurEntity persistEntrepreneurEntity(EntrepreneurEntity entrepreneur);
+    List<EntrepreneurEntity> getAllEntrepreneurs();
+    EntrepreneurEntity getEntrepreneur(Long id);
+    EntrepreneurEntity updateEntrepreneur(EntrepreneurEntity entrepreneur);
+    void deleteEntrepreneur(Long id);
 
 
 }

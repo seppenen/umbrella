@@ -22,6 +22,7 @@ services:
       - backend-network
 
 
+
   income-service:
     container_name: income-service
     build: backend/income-service
