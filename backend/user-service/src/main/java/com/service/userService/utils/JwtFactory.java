@@ -16,6 +16,8 @@ import java.util.Map;
 /**
  * JwtFactory class provides methods to generate, validate, and extract information from JWT tokens.
  */
+
+//TODO: Delete file if necessary
 @Service
 public class JwtFactory {
     private static final String SECRET_KEY = "357638792F423F4428472B4B6250655368566D597133743677397A2443264629";

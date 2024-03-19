@@ -6,21 +6,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.umbrella.dto.UserResponseDto;
 import org.umbrella.dto.EntrepreneurDto;
+import org.umbrella.dto.UserResponseDto;
 import org.umbrella.service.EntrepreneurServiceInterface;
+import org.umbrella.utils.JwtService;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1")
 public class UmbrellaEndpoints {
 
     private final UmbrellaFacade umbrellaFacade;
+    private final JwtService jwtService;
     private final EntrepreneurServiceInterface entrepreneurService;
 
-    public UmbrellaEndpoints(UmbrellaFacade umbrellaFacade, EntrepreneurServiceInterface entrepreneurService) {
+    public UmbrellaEndpoints(UmbrellaFacade umbrellaFacade, JwtService jwtService, EntrepreneurServiceInterface entrepreneurService) {
         this.umbrellaFacade = umbrellaFacade;
+        this.jwtService = jwtService;
         this.entrepreneurService = entrepreneurService;
     }
 
@@ -33,6 +38,14 @@ public class UmbrellaEndpoints {
     public ResponseEntity<List<UserResponseDto>> fetchUsersFromUserService() {
         List<UserResponseDto> userServiceUsers = umbrellaFacade.getUsersFromUserService();
         return ResponseEntity.ok(userServiceUsers);
+    }
+
+    @PostMapping("/refresh-token/{uuid}")
+    public ResponseEntity<String> refreshToken(@PathVariable String uuid) {
+
+        //TODO: Implement the logic to refresh the token
+        String token = jwtService.GenerateToken("0000");
+        return ResponseEntity.ok(token);
     }
 
     /**
