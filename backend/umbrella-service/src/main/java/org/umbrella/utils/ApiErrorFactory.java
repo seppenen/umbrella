@@ -16,7 +16,7 @@ public class ApiErrorFactory {
      * @param detail  The detailed description of the error.
      * @return An instance of ApiErrorResponse.
      */
-    public ApiErrorResponse create(HttpStatus status, String message, String detail) {
+    public static ApiErrorResponse create(HttpStatus status, String message, String detail) {
         ApiErrorResponse errorResponse = new ApiErrorResponse();
         errorResponse.setStatus(status);
         errorResponse.setErrorCode(status.value());

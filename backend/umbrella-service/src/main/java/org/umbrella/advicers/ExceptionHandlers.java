@@ -30,12 +30,12 @@ public class ExceptionHandlers {
     public static final String RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION = "Failed to register user";
 
     private final LoggerService loggerService;
-    private final ApiErrorFactory apiErrorFactory;
+
 
     @Autowired
-    public ExceptionHandlers(LoggerService loggerService, ApiErrorFactory apiErrorFactory) {
+    public ExceptionHandlers(LoggerService loggerService) {
         this.loggerService = loggerService;
-        this.apiErrorFactory = apiErrorFactory;
+
     }
 
     @ExceptionHandler(Exception.class)
@@ -92,7 +92,7 @@ public class ExceptionHandlers {
             String detail,
             HttpStatus status
     ) {
-        ApiErrorResponse apiErrorResponse = apiErrorFactory.create(status, message, detail);
+        ApiErrorResponse apiErrorResponse = ApiErrorFactory.create(status, message, detail);
         loggerService.logError(ex, status);
         return new ResponseEntity<>(apiErrorResponse, new HttpHeaders(), status);
     }

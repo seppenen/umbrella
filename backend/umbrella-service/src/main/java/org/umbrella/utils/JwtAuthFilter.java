@@ -20,44 +20,40 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
     private final JwtService jwtService;
-    private final ApiErrorFactory apiErrorFactory;
-    public JwtAuthFilter(JwtService jwtService, ApiErrorFactory apiErrorFactory) {
+    public JwtAuthFilter(JwtService jwtService) {
         this.jwtService = jwtService;
-        this.apiErrorFactory = apiErrorFactory;
     }
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
+            String header = request.getHeader("Authorization");
 
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.replace("Bearer ", "");
-
-        try {
-            if (jwtService.validateToken(token)) {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(null, token, new ArrayList<>());
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            if (header == null || !header.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
                 return;
             }
-        } catch (Exception ex) {
-            ApiErrorResponse apiErrorResponse = apiErrorFactory.create(HttpStatus.UNAUTHORIZED, ex.getMessage(), "The provided token is not valid");
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            String errorResponse = objectMapper.writeValueAsString(apiErrorResponse);
-
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(errorResponse);
+            String token = header.replace("Bearer ","");
+        try {
+            jwtService.validateToken(token);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(null, token, new ArrayList<>());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            } catch (Exception ex) {
+                writeAuthException(response, HttpServletResponse.SC_UNAUTHORIZED, "Error authenticating: ");
             return;
         }
 
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+        }
+
+    private void writeAuthException(HttpServletResponse response, int status, String errorMessage) throws IOException {
+        ApiErrorResponse apiErrorResponse = ApiErrorFactory.create(HttpStatus.UNAUTHORIZED, errorMessage, "The provided token is not valid");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String errorResponse = objectMapper.writeValueAsString(apiErrorResponse);
+
+        response.setContentType("application/json");
+        response.setStatus(status);
+        response.getWriter().write(errorResponse);
     }
+
 }
