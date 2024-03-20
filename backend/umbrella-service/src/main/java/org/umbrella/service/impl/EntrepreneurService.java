@@ -1,10 +1,12 @@
-package org.umbrella.service;
+package org.umbrella.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.umbrella.entity.EntrepreneurEntity;
 import org.umbrella.repository.EntrepreneurRepository;
+import org.umbrella.service.EntrepreneurServiceInterface;
+import org.umbrella.service.LoggerService;
 
 import java.text.MessageFormat;
 import java.util.List;

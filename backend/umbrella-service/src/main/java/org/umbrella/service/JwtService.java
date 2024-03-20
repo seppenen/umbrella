@@ -1,4 +1,4 @@
-package org.umbrella.utils;
+package org.umbrella.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

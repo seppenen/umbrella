@@ -1,15 +1,17 @@
 package org.umbrella.configuration;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.umbrella.utils.ApiErrorFactory;
+import org.umbrella.service.ApiResponseErrorFactory;
 import org.umbrella.utils.JwtAuthFilter;
 
 @Configuration
@@ -18,12 +20,20 @@ import org.umbrella.utils.JwtAuthFilter;
 public class SpringSecurityConfiguration {
 
     private final JwtAuthFilter jwtAuthFilter;
-    private final ApiErrorFactory apiErrorFactory;
+    private final ApiResponseErrorFactory apiResponseFactory;
 
-    public SpringSecurityConfiguration(JwtAuthFilter jwtAuthFilter, ApiErrorFactory apiErrorFactory) {
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
+    public SpringSecurityConfiguration(
+            JwtAuthFilter jwtAuthFilter,
+            ApiResponseErrorFactory apiResponseFactory,
+            @Qualifier("delegatedAuthenticationEntryPoint")
+            AuthenticationEntryPoint authenticationEntryPoint
+
+    ) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.apiErrorFactory = apiErrorFactory;
-
+        this.apiResponseFactory = apiResponseFactory;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     /**
@@ -46,10 +56,11 @@ public class SpringSecurityConfiguration {
                         .permitAll()
                         .requestMatchers("api/v1/**").authenticated()
                 )
+
+                //TODO: improve exception handling
                 .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
-                        .authenticationEntryPoint((request, response, authException) ->
-                                apiErrorFactory.writeResponseError(response, authException))
+                        .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler((request, response, accessDeniedException) ->
                                 response.sendError(HttpServletResponse.SC_FORBIDDEN))
                 );

@@ -1,4 +1,4 @@
-package org.umbrella.advicers;
+package org.umbrella.exceptionHandlers;
 
 /**
  * Author: Aleksandr Seppenen
@@ -7,47 +7,64 @@ package org.umbrella.advicers;
  */
 
 
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.umbrella.entity.ApiErrorResponse;
+import org.umbrella.service.ApiResponseErrorFactory;
 import org.umbrella.service.LoggerService;
-import org.umbrella.utils.ApiErrorFactory;
 
-
+@Order(1)
 @ControllerAdvice
-public class ExceptionHandlers {
+public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
     private static final String INTERNAL_ERROR_EXCEPTION = "An internal error has occurred";
     private static final String RESPONSE_INVALID_JSON_EXCEPTION = "Invalid JSON format";
 
+    private static String INVALID_JWT_TOKEN = "Jwt token invalid";
     private static final String RESPONSE_ENTITY_NOT_FOUND_ERROR = "Entity not found";
-
     public static final String RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION = "Failed to register user";
 
     private final LoggerService loggerService;
-    private final ApiErrorFactory apiErrorFactory;
+    private final ApiResponseErrorFactory apiErrorFactory;
 
-    @Autowired
-    public ExceptionHandlers(LoggerService loggerService, ApiErrorFactory apiErrorFactory) {
+
+    public GlobalExceptionHandlers(LoggerService loggerService, ApiResponseErrorFactory apiErrorFactory) {
         this.loggerService = loggerService;
 
         this.apiErrorFactory = apiErrorFactory;
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public void processRuntimeException(ExpiredJwtException ex) {
-        loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @ExceptionHandler(RuntimeException.class)
     public void processRuntimeException(RuntimeException ex) {
         loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+
+    /**
+     * Handles AuthenticationException and SignatureException and returns an appropriate API response.
+     *
+     * @param ex The Exception object representing the exception.
+     * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
+     */
+    @ExceptionHandler({AuthenticationException.class, SignatureException.class})
+    public ResponseEntity<ApiErrorResponse> handleAuthenticationException(Exception ex) {
+        return handleExceptionAndResponse(
+                ex,
+                INVALID_JWT_TOKEN,
+                "The provided JWT token is not valid or has expired",
+                HttpStatus.UNAUTHORIZED
+        );
     }
 
 
@@ -57,14 +74,15 @@ public class ExceptionHandlers {
      * @param ex The HttpMessageNotReadableException object representing the exception.
      * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
      */
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        return handleExceptionAndResponse(
+    @Override
+    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ResponseEntity<ApiErrorResponse> responseEntity = handleExceptionAndResponse(
                 ex,
                 RESPONSE_INVALID_JSON_EXCEPTION,
                 "The provided JSON is not valid",
                 HttpStatus.BAD_REQUEST
         );
+        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
     }
 
 

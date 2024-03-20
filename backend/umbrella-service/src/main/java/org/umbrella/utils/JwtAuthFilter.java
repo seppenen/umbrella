@@ -1,15 +1,15 @@
 package org.umbrella.utils;
 
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.umbrella.service.ApiResponseErrorFactory;
+import org.umbrella.service.JwtService;
 import org.umbrella.service.LoggerService;
 
 import java.io.IOException;
@@ -23,8 +23,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final LoggerService loggerService;
-    private final ApiErrorFactory apiErrorFactory;
-    public JwtAuthFilter(JwtService jwtService, LoggerService loggerService, ApiErrorFactory apiErrorFactory) {
+    private final ApiResponseErrorFactory apiErrorFactory;
+    public JwtAuthFilter(JwtService jwtService, LoggerService loggerService, ApiResponseErrorFactory apiErrorFactory) {
         this.jwtService = jwtService;
         this.loggerService = loggerService;
         this.apiErrorFactory = apiErrorFactory;
@@ -55,14 +55,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
             String token = header.replace("Bearer ","");
-            try {
-                jwtService.validateToken(token);
-                authenticateWithToken(token);
-                filterChain.doFilter(request, response);
-            } catch (JwtException e) {
-                loggerService.logError(e, HttpStatus.UNAUTHORIZED);
-                throw new JwtException(INVALID_TOKEN);
-            }
+            jwtService.validateToken(token);
+            authenticateWithToken(token);
+            filterChain.doFilter(request, response);
+
     }
 
     private void authenticateWithToken(String token) {

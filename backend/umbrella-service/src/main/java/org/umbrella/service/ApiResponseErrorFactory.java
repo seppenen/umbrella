@@ -1,4 +1,4 @@
-package org.umbrella.utils;
+package org.umbrella.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Date;
 
 @Service
-public class ApiErrorFactory {
+public class ApiResponseErrorFactory {
     /**
      * Creates an instance of ApiErrorResponse with the specified parameters.
      *

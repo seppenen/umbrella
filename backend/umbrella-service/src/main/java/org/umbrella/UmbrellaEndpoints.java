@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.umbrella.dto.EntrepreneurDto;
 import org.umbrella.dto.UserResponseDto;
-import org.umbrella.utils.JwtService;
+import org.umbrella.service.JwtService;
 
 import java.util.List;
 
