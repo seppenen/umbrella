@@ -7,7 +7,6 @@ package org.umbrella.exceptionHandlers;
  */
 
 
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -57,8 +56,9 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
      * @param ex The Exception object representing the exception.
      * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
      */
-    @ExceptionHandler({AuthenticationException.class, SignatureException.class})
+    @ExceptionHandler({AuthenticationException.class})
     public ResponseEntity<ApiErrorResponse> handleAuthenticationException(Exception ex) {
+        //TODO: Catch the exception SignatureException
         return handleExceptionAndResponse(
                 ex,
                 INVALID_JWT_TOKEN,
