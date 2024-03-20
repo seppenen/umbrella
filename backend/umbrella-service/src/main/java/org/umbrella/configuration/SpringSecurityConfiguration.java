@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.umbrella.service.ApiResponseErrorFactory;
 import org.umbrella.utils.JwtAuthFilter;
 
 @Configuration
@@ -20,19 +19,15 @@ import org.umbrella.utils.JwtAuthFilter;
 public class SpringSecurityConfiguration {
 
     private final JwtAuthFilter jwtAuthFilter;
-    private final ApiResponseErrorFactory apiResponseFactory;
-
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
     public SpringSecurityConfiguration(
             JwtAuthFilter jwtAuthFilter,
-            ApiResponseErrorFactory apiResponseFactory,
             @Qualifier("delegatedAuthenticationEntryPoint")
             AuthenticationEntryPoint authenticationEntryPoint
 
     ) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.apiResponseFactory = apiResponseFactory;
         this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
@@ -56,8 +51,6 @@ public class SpringSecurityConfiguration {
                         .permitAll()
                         .requestMatchers("api/v1/**").authenticated()
                 )
-
-                //TODO: improve exception handling
                 .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
                         .authenticationEntryPoint(authenticationEntryPoint)

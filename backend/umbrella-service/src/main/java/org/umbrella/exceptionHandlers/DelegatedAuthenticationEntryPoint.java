@@ -11,7 +11,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
-@Component("delegatedAuthenticationEntryPoint")
+@Component
 public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final HandlerExceptionResolver resolver;
