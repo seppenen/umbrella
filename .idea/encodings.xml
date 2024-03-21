@@ -3,7 +3,8 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/api-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/backend/api-gateway/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/backend/income-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/auth-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/eureka-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/backend/outcome-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/backend/spring-data-jpa/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/backend/umbrella-service/src/main/java" charset="UTF-8" />

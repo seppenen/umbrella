@@ -2,10 +2,9 @@ version: '3'
 vars:
   HOME_DIR: '${HOME}'
   INIT_DATA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/data'
-  USER_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/user-service'
+  EUREKA_SERVER_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/eureka-server'
   UMBRELLA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/umbrella-service'
-  INCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/income-service'
-  OUTCOME_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/outcome-service'
+  AUTH_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/auth-service'
   GATEWAY_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/api-gateway'
 
 tasks:
@@ -40,13 +39,11 @@ tasks:
     cmds:
       - task: clean-docker
       - task: build
-        vars: {BUILD_DIR: '{{.USER_SERVICE_DIR}}'}
+        vars: {BUILD_DIR: '{{.EUREKA_SERVER_DIR}}'}
       - task: build
         vars: { BUILD_DIR: '{{.UMBRELLA_DIR}}' }
       - task: build
-        vars: { BUILD_DIR: '{{.INCOME_SERVICE_DIR}}' }
-      - task: build
-        vars: { BUILD_DIR: '{{.OUTCOME_SERVICE_DIR}}' }
+        vars: { BUILD_DIR: '{{.AUTH_SERVICE_DIR}}' }
       - task: build
         vars: { BUILD_DIR: '{{.GATEWAY_SERVICE_DIR}}' }
       - task: create-database

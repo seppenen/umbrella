@@ -55,10 +55,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
             String token = header.replace("Bearer ","");
+
             jwtService.validateToken(token);
             authenticateWithToken(token);
             filterChain.doFilter(request, response);
-
     }
 
     private void authenticateWithToken(String token) {

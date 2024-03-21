@@ -7,6 +7,7 @@ package org.umbrella.exceptionHandlers;
  */
 
 
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -56,10 +57,10 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
      * @param ex The Exception object representing the exception.
      * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
      */
-    @ExceptionHandler({AuthenticationException.class})
+    @ExceptionHandler({AuthenticationException.class, SignatureException.class})
     public ResponseEntity<ApiErrorResponse> handleAuthenticationException(Exception ex) {
         //TODO: Catch the exception SignatureException
-        return handleExceptionAndResponse(
+        return handleExceptionLogAndResponse(
                 ex,
                 INVALID_JWT_TOKEN,
                 "The provided JWT token is not valid or has expired",
@@ -76,7 +77,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
      */
     @Override
     public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        ResponseEntity<ApiErrorResponse> responseEntity = handleExceptionAndResponse(
+        ResponseEntity<ApiErrorResponse> responseEntity = handleExceptionLogAndResponse(
                 ex,
                 RESPONSE_INVALID_JSON_EXCEPTION,
                 "The provided JSON is not valid",
@@ -94,7 +95,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return handleExceptionAndResponse(
+        return handleExceptionLogAndResponse(
                 ex,
                 RESPONSE_ENTITY_NOT_FOUND_ERROR,
                 "Entity is null or not found",
@@ -112,7 +113,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
      * @param status  The HttpStatus code to be included in the API error response.
      * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
      */
-    private ResponseEntity<ApiErrorResponse> handleExceptionAndResponse(
+    private ResponseEntity<ApiErrorResponse> handleExceptionLogAndResponse(
             Throwable ex,
             String message,
             String detail,

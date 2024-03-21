@@ -3,11 +3,9 @@ package org.umbrella.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
-import org.umbrella.exceptions.SignatureInvalidException;
 
 import java.security.Key;
 import java.util.Date;
@@ -50,11 +48,7 @@ public class JwtService {
     }
 
     public Boolean isSignatureValid(String token) {
-        try {
-            extractAllClaims(token);
-        } catch (SignatureException e) {
-            throw new SignatureInvalidException("Invalid signature");
-        }
+        extractAllClaims(token);
         return true;
     }
 
@@ -63,7 +57,7 @@ public class JwtService {
     }
 
 
-    public String GenerateToken(String uuid) {
+    public String generateToken(String uuid) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("uuid", uuid);
         return createToken(claims, uuid);

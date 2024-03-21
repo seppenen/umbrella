@@ -8,9 +8,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.umbrella.exceptionHandlers.DelegatedAuthenticationEntryPoint;
 import org.umbrella.utils.JwtAuthFilter;
 
 @Configuration
@@ -19,12 +19,13 @@ import org.umbrella.utils.JwtAuthFilter;
 public class SpringSecurityConfiguration {
 
     private final JwtAuthFilter jwtAuthFilter;
-    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final DelegatedAuthenticationEntryPoint authenticationEntryPoint;
 
     public SpringSecurityConfiguration(
             JwtAuthFilter jwtAuthFilter,
+
             @Qualifier("delegatedAuthenticationEntryPoint")
-            AuthenticationEntryPoint authenticationEntryPoint
+            DelegatedAuthenticationEntryPoint authenticationEntryPoint
 
     ) {
         this.jwtAuthFilter = jwtAuthFilter;
@@ -51,7 +52,7 @@ public class SpringSecurityConfiguration {
                         .permitAll()
                         .requestMatchers("api/v1/**").authenticated()
                 )
-                .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler((request, response, accessDeniedException) ->
