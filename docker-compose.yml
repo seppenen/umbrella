@@ -31,8 +31,6 @@ services:
     restart: unless-stopped
     ports:
       - ${EUREKA_SERVER_PORT:-8761}:8761
-    depends_on:
-      - postgres-db-service
     networks:
         - backend-network
 
@@ -40,16 +38,59 @@ services:
   umbrella-service:
     container_name: umbrella-service
     build: backend/umbrella-service
-    image: ${UMBRELLA_IMAGE:-umbrella-service}
+    image: ${UMBRELLA_SERVICE_IMAGE:-umbrella-service}
     env_file:
       - ./backend/umbrella-service/.env.${ENVIRONMENT:-dev}
     restart: unless-stopped
     ports:
-      - ${UMBRELLA_PORT:-8080}:8080
+      - ${UMBRELLA_PORT:-0}:8080
     depends_on:
       - postgres-db-service
       - eureka-server
     networks:
       - backend-network
 
+  user-service:
+    container_name: user-service
+    build: backend/user-service
+    image: ${UMBRELLA_SERVICE_IMAGE:-user-service}
+    env_file:
+      - ./backend/user-service/.env.${ENVIRONMENT:-dev}
+    restart: unless-stopped
+    ports:
+      - ${UMBRELLA_PORT:-0}:8080
+    depends_on:
+      - postgres-db-service
+      - eureka-server
+    networks:
+      - backend-network
 
+  auth-service:
+    container_name: auth-service
+    build: backend/auth-service
+    image: ${AUTH_SERVICE_IMAGE:-auth-service}
+    env_file:
+      - ./backend/auth-service/.env.${ENVIRONMENT:-dev}
+    restart: unless-stopped
+    ports:
+      - ${AUTH_SERVICE_PORT:-0}:8080
+    depends_on:
+      - postgres-db-service
+      - eureka-server
+    networks:
+      - backend-network
+
+  api-gateway:
+    container_name: api-gateway
+    build: backend/api-gateway
+    image: ${API_GATEWAY_IMAGE:-api-gateway}
+    env_file:
+      - ./backend/api-gateway/.env.${ENVIRONMENT:-dev}
+    restart: unless-stopped
+    ports:
+      - ${API_GATEWAY_PORT:-0}:8080
+    depends_on:
+      - postgres-db-service
+      - eureka-server
+    networks:
+      - backend-network

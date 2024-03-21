@@ -30,7 +30,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
     private static final String INTERNAL_ERROR_EXCEPTION = "An internal error has occurred";
     private static final String RESPONSE_INVALID_JSON_EXCEPTION = "Invalid JSON format";
 
-    private static String INVALID_JWT_TOKEN = "Jwt token invalid";
+    private static final String UNAUTHORIZED_ACCESS = "Unauthorized access";
     private static final String RESPONSE_ENTITY_NOT_FOUND_ERROR = "Entity not found";
     public static final String RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION = "Failed to register user";
 
@@ -62,7 +62,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
         //TODO: Catch the exception SignatureException
         return handleExceptionLogAndResponse(
                 ex,
-                INVALID_JWT_TOKEN,
+                UNAUTHORIZED_ACCESS,
                 "The provided JWT token is not valid or has expired",
                 HttpStatus.UNAUTHORIZED
         );
