@@ -3,12 +3,14 @@ vars:
   HOME_DIR: '${HOME}'
   INIT_DATA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/data'
   EUREKA_SERVER_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/eureka-server'
-  UMBRELLA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/umbrella-service'
+  UMBRELLA_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/umbrella-service'
   AUTH_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/auth-service'
+  USER_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/user-service'
   GATEWAY_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/api-gateway'
 
 tasks:
   clean-docker:
+    silent: true
     cmds:
       - echo "Stopping all running containers..."
       - docker ps -q | xargs -r docker stop || echo "No running containers found."
@@ -17,37 +19,62 @@ tasks:
       - echo "Removing all images..."
       - docker images -q | xargs -r docker rmi -f || echo "No images to remove."
   clean-build:
+    silent: true
     cmds:
       - echo "Removing target directory in {{.TARGET_DIR}}"
       - rm -rf {{.TARGET_DIR}}
   build:
+    silent: true
     cmds:
     - echo "Building in {{.BUILD_DIR}}"
     - cd {{.BUILD_DIR}} && mvn clean package -DskipTests
 
   empty-database:
+    silent: true
     cmds:
       - echo "Removing all data from the database..."
       - docker rm -f postgres && docker-compose up -d postgres-db-service
 
   create-database:
+    silent: true
     cmds:
       - echo "Creating new DB"
       - docker-compose up -d postgres-db-service
 
+  redeploy:
+    cmds:
+      - |
+        echo "Starting task for {{.SERVICE}}"
+        echo "Stopping {{.SERVICE}} service container..."
+        docker stop {{.SERVICE}} || echo "No {{.SERVICE}} running container found."
+        echo "Removing {{.SERVICE}} service container..."
+        docker rm {{.SERVICE}} || echo "No {{.SERVICE}} container to remove."
+        echo "Removing {{.SERVICE}} service image..."
+        docker rmi {{.SERVICE}} || echo "No {{.SERVICE}} image to remove."
+        echo "Building in backend/{{.SERVICE}} directory"
+        cd backend/{{.SERVICE}} && mvn clean package -DskipTests
+        echo "Creating new {{.SERVICE}} service container..."
+        docker-compose up -d {{.SERVICE}}
+    silent: true
+
   build-all:
+    silent: true
     cmds:
       - task: clean-docker
       - task: build
         vars: {BUILD_DIR: '{{.EUREKA_SERVER_DIR}}'}
       - task: build
-        vars: { BUILD_DIR: '{{.UMBRELLA_DIR}}' }
+        vars: { BUILD_DIR: '{{.UMBRELLA_SERVICE_DIR}}' }
+      - task: build
+        vars: { BUILD_DIR: '{{.USER_SERVICE_DIR}}' }
       - task: build
         vars: { BUILD_DIR: '{{.AUTH_SERVICE_DIR}}' }
       - task: build
         vars: { BUILD_DIR: '{{.GATEWAY_SERVICE_DIR}}' }
       - task: create-database
       - docker-compose up -d
+      - echo "Waiting for 2 minutes..."
+      - sleep 120
 
 
   up:
