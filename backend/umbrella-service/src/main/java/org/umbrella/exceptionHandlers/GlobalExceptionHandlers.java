@@ -63,7 +63,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
         return handleExceptionLogAndResponse(
                 ex,
                 UNAUTHORIZED_ACCESS,
-                "The provided JWT token is not valid or has expired",
+                "",
                 HttpStatus.UNAUTHORIZED
         );
     }
