@@ -2,7 +2,7 @@ version: '3'
 vars:
   HOME_DIR: '${HOME}'
   INIT_DATA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/data'
-  EUREKA_SERVER_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/eureka-server'
+  EUREKA_SERVER_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/eureka'
   UMBRELLA_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/umbrella-service'
   AUTH_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/auth-service'
   USER_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/user-service'
@@ -73,8 +73,6 @@ tasks:
         vars: { BUILD_DIR: '{{.GATEWAY_SERVICE_DIR}}' }
       - task: create-database
       - docker-compose up -d
-      - echo "Waiting for 2 minutes..."
-      - sleep 120
 
 
   up:

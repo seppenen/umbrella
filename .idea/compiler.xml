@@ -10,8 +10,8 @@
         <module name="api-gateway" />
         <module name="auth-service" />
         <module name="user-service" />
-        <module name="eureka-server" />
         <module name="umbrella-service" />
+        <module name="eureka" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
@@ -33,7 +33,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="auth-service" options="-parameters" />
-      <module name="eureka-server" options="-parameters" />
+      <module name="eureka" options="-parameters" />
       <module name="outcome-service" options="-parameters" />
       <module name="spring-data-jpa" options="-parameters" />
       <module name="umbrella-service" options="-parameters" />
