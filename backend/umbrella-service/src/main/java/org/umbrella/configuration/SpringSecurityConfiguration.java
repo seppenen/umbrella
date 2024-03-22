@@ -47,7 +47,8 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(
                                 "swagger-ui/**",
                                 "v3/api-docs/**",
-                                "api/v1/refresh-token/**"
+                                "api/v1/refresh-token/**",
+                                "api/v1/health/**"
                         )
                         .permitAll()
                         .requestMatchers("api/v1/**").authenticated()

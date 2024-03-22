@@ -1,4 +1,5 @@
 FROM openjdk:17-jdk-alpine
+RUN apk add --no-cache curl
 VOLUME /tmp
 ADD ./target/auth-service-0.0.1-SNAPSHOT.jar app.jar
 COPY ./Entrypoint.sh /

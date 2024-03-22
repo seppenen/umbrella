@@ -12,7 +12,9 @@ import org.umbrella.dto.EntrepreneurDto;
 import org.umbrella.dto.UserResponseDto;
 import org.umbrella.service.JwtService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -99,7 +101,9 @@ public class UmbrellaEndpoints {
      * @return ResponseEntity - the response entity indicating the health status of the application
      */
     @GetMapping("/health")
-    public ResponseEntity getHealth() {
-        return ResponseEntity.ok("Application is running");
+    public ResponseEntity<Map<String, Object>> getHealth() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        return ResponseEntity.ok(response);
     }
 }
