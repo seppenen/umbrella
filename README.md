@@ -1,45 +1,22 @@
 # 'Hello world' Microservices Project
 
-This application employs Docker Compose, Jakarta EE, Spring Data JPA, Spring MVC, Lombok, Java SDK version 17, and PostgreSQL database. It primarily focuses on managing entrepreneurial data and user registration.
+This demo application utilize Docker Compose, Jakarta EE, Spring Cloud, Spring Data, Spring MVC, Lombok, Java SDK version 17, and PostgreSQL database. It primarily focuses on managing entrepreneurial data and user registration.
 
 ## Usage Guide
 ### Swagger UI
 This can be accessed via `http://localhost:8080/swagger-ui/index.html`.
 
-### User Registration Endpoint ([POST] /register)
-This endpoint incorporates the user's registration data, which is passed through the request body and subsequently transformed into a `UserRequestDto` object by Spring MVC. User registration is then performed with the help of 'UserService' and a 'UserResponseDto' is generated, which returns using 'ResponseEntity'.
-
-#### Sample Request Body
-`{...UserRequestDto's corresponding details}`
-
-#### Sample Response
-`{...UserResponseDto's corresponding details}`; the HTTP status code indicates whether the registration process was successful.
-
-### Endpoint to Fetch All Users ([GET] /api/v1/getAllUsers)
-This endpoint fetches a list of all users from the UserService.
-
-### Endpoint to Delete Entrepreneur ([DELETE] /api/v1/entrepreneurs/{id})
-This endpoint deletes an entrepreneur using their ID.
-
-### Endpoint to Fetch an Entrepreneur ([GET] /api/v1/entrepreneurs/{id})
-This endpoint fetches details of a specific entrepreneur using their ID.
-
-### Endpoint to Fetch All Entrepreneurs ([GET] /api/v1/entrepreneurs)
-This endpoint fetches details of all entrepreneurs.
-
-### Endpoint to Create New Entrepreneur ([POST] /api/v1/entrepreneurs)
-This endpoint creates a new entrepreneur.
-
-### Endpoint to Check Application Health ([GET] /api/v1/health)
-This endpoint checks and returns the current health status of the application.
+### Eureka
+This can be accessed via `http://localhost:8761
 
 ## Build Tasks
-A sequence of tasks is utilized for building this Java-based microservices project. The tasks are managed using docker-compose:
+A sequence of tasks is utilized for building this Java-based microservices project. The tasks are managed using `Taskfile`, with each task being prefixed by `task`, such as `task build` or `task deploy`. `Docker-compose` is used in some of these tasks to orchestrate the services.
 
 1. **clean-docker:** Stops and deletes all Docker containers and images.
 2. **empty-database:** Deletes all data in postgres Docker container and creates a new postgres-db-service Docker container.
 3. **create-database:** Generates a new postgres-db-service Docker container.
-4. **up:** Builds the entire project structure.
+4. **redeploy SERVICE={service-name}:** Redeploy a specific service.
+5. **up:** Builds the entire project structure.
 
 ## How to Initiate the Project
 Follow these steps to use this project:
