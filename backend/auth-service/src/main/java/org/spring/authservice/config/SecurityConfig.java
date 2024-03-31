@@ -1,7 +1,10 @@
 package org.spring.authservice.config;
 
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.spring.authservice.ExceptionHandlers.DelegatedAuthenticationEntryPoint;
 import org.spring.authservice.filters.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -20,9 +23,17 @@ public class SecurityConfig {
 
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final DelegatedAuthenticationEntryPoint authenticationEntryPoint;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+
+    public SecurityConfig(
+
+            @Qualifier("delegatedAuthenticationEntryPoint")
+            DelegatedAuthenticationEntryPoint authenticationEntryPoint,
+            JwtAuthenticationFilter jwtAuthenticationFilter
+    ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Bean
@@ -39,7 +50,12 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("api/v1/**").authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling((exceptionHandling) -> exceptionHandling
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN))
+                );
         return http.cors(Customizer.withDefaults()).build();
     }
 
