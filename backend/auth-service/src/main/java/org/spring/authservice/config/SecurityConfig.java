@@ -1,74 +1,51 @@
 package org.spring.authservice.config;
 
 
-import jakarta.servlet.http.HttpServletResponse;
-import org.spring.authservice.ExceptionHandlers.DelegatedAuthenticationEntryPoint;
+import org.spring.authservice.ExceptionHandlers.DelegatedServerAuthenticationEntryPoint;
 import org.spring.authservice.filters.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
+import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
-@EnableWebSecurity
+@EnableWebFluxSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
-
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final DelegatedAuthenticationEntryPoint authenticationEntryPoint;
-
+    private final DelegatedServerAuthenticationEntryPoint delegatedServerAuthenticationEntryPoint;
 
     public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            DelegatedServerAuthenticationEntryPoint delegatedServerAuthenticationEntryPoint
 
-            @Qualifier("delegatedAuthenticationEntryPoint")
-            DelegatedAuthenticationEntryPoint authenticationEntryPoint,
-            JwtAuthenticationFilter jwtAuthenticationFilter
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.delegatedServerAuthenticationEntryPoint = delegatedServerAuthenticationEntryPoint;
     }
 
     @Bean
-    public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(
                                 "swagger-ui/**",
                                 "v3/api-docs/**",
                                 "api/v1/token/**",
                                 "api/v1/health/**"
                         )
-                        .permitAll()
-                        .requestMatchers("api/v1/**").authenticated()
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling((exceptionHandling) -> exceptionHandling
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler((request, response, accessDeniedException) ->
-                                response.sendError(HttpServletResponse.SC_FORBIDDEN))
+                        .permitAll())
+                        .authorizeExchange(exchanges -> exchanges
+                                .anyExchange().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHORIZATION)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(delegatedServerAuthenticationEntryPoint)
                 );
-        return http.cors(Customizer.withDefaults()).build();
-    }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.addAllowedOrigin("*");
-        config.setAllowCredentials(true);
-        source.registerCorsConfiguration("/**", config);
-        return source;
+        return http.build();
     }
-
 }

@@ -1,19 +1,19 @@
-package entity;
+package org.spring.authservice.entity;
 
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 
 import java.util.Date;
 
 @Setter
 @Getter
 public class ApiErrorResponse {
-    private HttpStatus status;
+    private String status;
     private int errorCode;
     private String message;
-    private String detail;
+    boolean error;
     private Date timeStamp;
+
 
 }
