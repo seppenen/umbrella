@@ -1,4 +1,4 @@
-package org.spring.authservice.ExceptionHandlers;
+package org.spring.authservice.exceptionHandlers;
 
 /**
  * Author: Aleksandr Seppenen

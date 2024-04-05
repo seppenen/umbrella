@@ -1,7 +1,7 @@
 package org.spring.authservice.config;
 
 
-import org.spring.authservice.ExceptionHandlers.DelegatedServerAuthenticationEntryPoint;
+import org.spring.authservice.exceptionHandlers.DelegatedServerAuthenticationEntryPoint;
 import org.spring.authservice.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity

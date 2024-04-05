@@ -1,4 +1,4 @@
-package org.spring.authservice.ExceptionHandlers;
+package org.spring.authservice.exceptionHandlers;
 
 import org.spring.authservice.service.ApiResponseErrorFactory;
 import org.springframework.http.HttpStatus;
@@ -6,10 +6,7 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 /**
