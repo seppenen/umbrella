@@ -15,15 +15,13 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final DelegatedServerAuthenticationEntryPoint delegatedServerAuthenticationEntryPoint;
 
     public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            DelegatedServerAuthenticationEntryPoint delegatedServerAuthenticationEntryPoint
+            JwtAuthenticationFilter jwtAuthenticationFilter
 
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.delegatedServerAuthenticationEntryPoint = delegatedServerAuthenticationEntryPoint;
+
     }
 
     @Bean
@@ -42,7 +40,7 @@ public class SecurityConfig {
                                 .anyExchange().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHORIZATION)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(delegatedServerAuthenticationEntryPoint)
+                        .authenticationEntryPoint(new DelegatedServerAuthenticationEntryPoint())
                 );
 
         return http.build();
