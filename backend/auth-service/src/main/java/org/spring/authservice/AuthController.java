@@ -17,19 +17,19 @@ public class AuthController {
     }
 
     @PostMapping("/auth")
-    public Mono<Map<String, String>> authenticateUser() {
-        return authFacade.authenticate();
+    public Mono<Map<String, String>> validateToken() {
+        return authFacade.validateToken();
     }
 
     @GetMapping("/token")
     //TODO: forbid this endpoint in production
     public Mono<Map<String, Object>> generateAuthenticationToken() {
-        return authFacade.generateToken();
+        return authFacade.createNewToken();
     }
 
     @GetMapping("/health")
     public Mono<Map<String, Object>> getServiceHealthStatus() {
-        return authFacade.getHealthStatus();
+        return authFacade.checkServiceHealth();
     }
 }
 

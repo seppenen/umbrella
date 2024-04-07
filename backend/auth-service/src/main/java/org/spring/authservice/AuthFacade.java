@@ -11,31 +11,29 @@ import java.util.Map;
 public class AuthFacade {
 
     private static final String STATUS = "status";
-    private static final String IS_AUTHENTICATED = "isAuthenticated";
-    private static final String ACCESS_TOKEN = "access_token";
+    private static final String TOKEN_VALID = "tokenValid";
+    private static final String TOKEN_KEY = "token";
     private final JwtService jwtService;
-
-    private static final Mono<Map<String, String>> AUTHENTICATE_RESPONSE = Mono.fromSupplier(() ->
-            Map.of(STATUS, "success", IS_AUTHENTICATED, "true")
-    );
-
-    private static final Mono<Map<String, Object>> HEALTH_STATUS_RESPONSE = Mono.fromSupplier(() ->
-            Collections.singletonMap(STATUS, "UP")
-    );
 
     public AuthFacade(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
-    public Mono<Map<String, String>> authenticate() {
-        return AUTHENTICATE_RESPONSE;
+    public Mono<Map<String, String>> validateToken() {
+        return Mono.just(Map.of(
+                STATUS, "success",
+                TOKEN_VALID, "true")
+        );
     }
 
-    public Mono<Map<String, Object>> generateToken() {
-        return Mono.just(Collections.singletonMap(ACCESS_TOKEN, jwtService.generateToken()));
+    public Mono<Map<String, Object>> createNewToken() {
+        return Mono.just(Collections.singletonMap(
+                TOKEN_KEY,
+                jwtService.generateToken()
+        ));
     }
 
-    public Mono<Map<String, Object>> getHealthStatus() {
-        return HEALTH_STATUS_RESPONSE;
+    public Mono<Map<String, Object>> checkServiceHealth() {
+        return Mono.just(Collections.singletonMap(STATUS, "UP"));
     }
 }
