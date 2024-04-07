@@ -12,23 +12,23 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class AuthController {
     private final AuthFacade authFacade;
-
     public AuthController(AuthFacade authFacade) {
         this.authFacade = authFacade;
     }
+
     @PostMapping("/auth")
-    public Mono<Map<String, String>> authenticate() {
+    public Mono<Map<String, String>> authenticateUser() {
         return authFacade.authenticate();
     }
 
     @GetMapping("/token")
     //TODO: forbid this endpoint in production
-    public Mono<Map<String, Object>> getToken() {
+    public Mono<Map<String, Object>> generateAuthenticationToken() {
         return authFacade.generateToken();
     }
 
     @GetMapping("/health")
-    public Mono<Map<String, Object>> getHealth() {
+    public Mono<Map<String, Object>> getServiceHealthStatus() {
         return authFacade.getHealthStatus();
     }
 }
