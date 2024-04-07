@@ -17,6 +17,7 @@ public class AuthController {
     private static final String TOKEN_VALID = "tokenValid";
     private static final String TOKEN_KEY = "token";
     private final JwtService jwtService;
+
     public AuthController(JwtService jwtService) {
         this.jwtService = jwtService;
     }
