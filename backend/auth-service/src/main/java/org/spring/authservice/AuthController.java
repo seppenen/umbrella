@@ -23,24 +23,18 @@ public class AuthController {
     }
 
     @PostMapping("/auth")
-    public Mono<Map<String, String>> validateToken() {
-        return Mono.just(Map.of(
-                STATUS, "success",
-                TOKEN_VALID, "true")
-        );
+    public Mono<Map<String, Object>> validateToken() {
+        return Mono.just(Map.of(STATUS, "success", TOKEN_VALID, true));
     }
 
     @GetMapping("/token")
     //TODO: forbid this endpoint in production
     public Mono<Map<String, String>> generateAuthenticationToken() {
-        return Mono.just(Collections.singletonMap(
-                TOKEN_KEY,
-                jwtService.generateToken()
-        ));
+        return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateToken()));
     }
 
     @GetMapping("/health")
-    public Mono<Map<String, Object>> getServiceHealthStatus() {
+    public Mono<Map<String, String>> getServiceHealthStatus() {
         return Mono.just(Collections.singletonMap(STATUS, "UP"));
     }
 }
