@@ -2,6 +2,8 @@
 
 This demo application utilize Docker Compose, Jakarta EE, Spring Cloud, Spring Data, Spring MVC, Lombok, Java SDK version 17, and PostgreSQL database. It primarily focuses on managing entrepreneurial data and user registration.
 
+![](/Users/alexandrseppenen/Downloads/diagram.svg)
+
 ## Usage Guide
 ### Swagger UI
 This can be accessed via `http://localhost:8080/swagger-ui/index.html`.
