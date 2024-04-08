@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
-import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -25,32 +24,27 @@ public class AuthServiceClientTest {
 
     private AuthServiceClient authServiceClient;
     private MockWebServer mockWebServer;
+    private WebClient.Builder webClientBuilder;
 
     @BeforeEach
     void setUp() throws IOException {
         this.mockWebServer = new MockWebServer();
         this.mockWebServer.start();
-
-        WebClient.Builder webClientBuilder = WebClient.builder().baseUrl(mockWebServer.url("/").toString());
         this.authServiceClient = new AuthServiceClient(webClientBuilder);
+    }
+
+    void setupMockServerResponse(int responseCode, String responseBody) {
+        MockResponse mockResponse = new MockResponse()
+                .setResponseCode(responseCode)
+                .setBody(responseBody);
+        mockWebServer.enqueue(mockResponse);
     }
 
     @Test
     void validateToken_whenTokenIsValid_returnTrue() {
-        //Request new token before running this test
-        Map<String, String> response = webTestClient.get().uri("http://localhost/auth/api/v1/token")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Map.class)
-                .returnResult().getResponseBody();
+        String token = this.authServiceClient.requestToken().block();
 
-        assert response != null;
-        String token =  response.get("access_token");
-
-        MockResponse mockResponse = new MockResponse()
-                .setResponseCode(200)
-                .setBody("{ \"valid\": true }"); // replace with expected server response
-        mockWebServer.enqueue(mockResponse);
+        setupMockServerResponse(200, "{ \"valid\": true }");
 
         var result = this.authServiceClient.validateToken(token);
         StepVerifier.create(result)
@@ -60,11 +54,7 @@ public class AuthServiceClientTest {
 
     @Test
     void validateToken_whenTokenIsInvalid_returnFalse() {
-        MockResponse mockResponse = new MockResponse()
-                .setResponseCode(401)
-                .setBody("{ \"valid\": false }");
-        mockWebServer.enqueue(mockResponse);
-
+        setupMockServerResponse(401, "{ \"valid\": false }");
         var result = this.authServiceClient.validateToken("invalid_token");
         StepVerifier.create(result)
                 .expectNext(false)
