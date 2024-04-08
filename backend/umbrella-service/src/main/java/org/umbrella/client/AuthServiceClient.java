@@ -17,6 +17,14 @@ public class AuthServiceClient {
         return validateTokenWithWebClient(webClient);
     }
 
+    public Mono<String> requestToken() {
+        return this.authServerClient
+                .build()
+                .post()
+                .uri("/api/v1/token")
+                .exchangeToMono(response -> response.bodyToMono(String.class));
+    }
+
     private WebClient buildAuthServerWebClient(String token) {
         return this.authServerClient
                 .build()
