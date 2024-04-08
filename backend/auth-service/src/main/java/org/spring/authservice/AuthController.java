@@ -15,7 +15,7 @@ import java.util.Map;
 public class AuthController {
     private static final String STATUS = "status";
     private static final String TOKEN_VALID = "tokenValid";
-    private static final String TOKEN_KEY = "token";
+    private static final String TOKEN_KEY = "access_token";
     private final JwtService jwtService;
 
     public AuthController(JwtService jwtService) {
