@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.umbrella.dto.EntrepreneurDto;
 import org.umbrella.dto.UserResponseDto;
-import org.umbrella.service.JwtService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +20,9 @@ import java.util.Map;
 public class UmbrellaEndpoints {
 
     private final UmbrellaFacade umbrellaFacade;
-    private final JwtService jwtService;
 
-
-    public UmbrellaEndpoints(UmbrellaFacade umbrellaFacade, JwtService jwtService) {
+    public UmbrellaEndpoints(UmbrellaFacade umbrellaFacade) {
         this.umbrellaFacade = umbrellaFacade;
-        this.jwtService = jwtService;
-
     }
 
     /**
@@ -40,18 +35,11 @@ public class UmbrellaEndpoints {
         return ResponseEntity.ok(umbrellaFacade.getUsersFromUserService());
     }
 
-    @PostMapping("/refresh-token/{uuid}")
-    public ResponseEntity<String> refreshToken(@PathVariable String uuid) {
-        //TODO: Implement the logic to refresh the token
-
-       String token = jwtService.generateToken("0000");
-       return ResponseEntity.ok(token);
-    }
 
     /**
      * Removes an entrepreneur by their ID.
      *
-     * @param id the ID of the entrepreneur to be removed
+     * @param entrepreneurId the ID of the entrepreneur to be removed
      * @return a ResponseEntity with no content
      */
     @DeleteMapping("/entrepreneur/{id}")

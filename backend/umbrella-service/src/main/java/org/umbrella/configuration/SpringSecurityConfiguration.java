@@ -1,6 +1,7 @@
 package org.umbrella.configuration;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,25 +12,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.umbrella.exceptionHandlers.DelegatedAuthenticationEntryPoint;
-import org.umbrella.utils.JwtAuthFilter;
+import org.umbrella.filters.AuthServiceFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SpringSecurityConfiguration {
+    @Qualifier("delegatedAuthenticationEntryPoint")
+    DelegatedAuthenticationEntryPoint authenticationEntryPoint;
 
-    private final JwtAuthFilter jwtAuthFilter;
-    private final DelegatedAuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    AuthServiceFilter authServiceFilter;
 
-    public SpringSecurityConfiguration(
-            JwtAuthFilter jwtAuthFilter,
-
-            @Qualifier("delegatedAuthenticationEntryPoint")
-            DelegatedAuthenticationEntryPoint authenticationEntryPoint
-
-    ) {
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.authenticationEntryPoint = authenticationEntryPoint;
+    public SpringSecurityConfiguration() {
     }
 
     /**
@@ -53,7 +48,7 @@ public class SpringSecurityConfiguration {
                         .permitAll()
                         .requestMatchers("api/v1/**").authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authServiceFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler((request, response, accessDeniedException) ->
