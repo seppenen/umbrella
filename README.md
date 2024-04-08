@@ -2,7 +2,7 @@
 
 This demo application utilize Docker Compose, Java 17, Spring Boot 3.2, Spring Security 6, Spring Cloud, Spring Data, Spring MVC, Spring WebFlux and PostgreSQL database. It primarily focuses on managing entrepreneurial billing, invoicing, and reporting.
 
-
+![diagram.jpg](diagram.jpg)
 
 ## Usage Guide
 ### Swagger UI
