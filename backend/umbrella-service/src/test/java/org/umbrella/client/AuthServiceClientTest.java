@@ -12,12 +12,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 public class AuthServiceClientTest {
 
-
+    private static final String ACCESS_TOKEN = "access_token";
 
     @Autowired
     private WebTestClient webTestClient;
@@ -42,11 +43,12 @@ public class AuthServiceClientTest {
 
     @Test
     void validateToken_whenTokenIsValid_returnTrue() {
-        String token = this.authServiceClient.requestToken().block();
+        Map<String, String> requestTokenData = this.authServiceClient.requestToken().block();
 
         setupMockServerResponse(200, "{ \"valid\": true }");
 
-        var result = this.authServiceClient.validateToken(token);
+        assert requestTokenData != null;
+        var result = this.authServiceClient.validateToken(requestTokenData.get(ACCESS_TOKEN));
         StepVerifier.create(result)
                 .expectNext(true)
                 .verifyComplete();

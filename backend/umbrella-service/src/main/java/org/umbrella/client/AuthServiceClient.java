@@ -1,9 +1,13 @@
 package org.umbrella.client;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
+
 @Component
 public class AuthServiceClient {
     private final WebClient.Builder authServerClient;
@@ -17,12 +21,12 @@ public class AuthServiceClient {
         return validateTokenWithWebClient(webClient);
     }
 
-    public Mono<String> requestToken() {
+    public Mono<Map<String, String>> requestToken() {
         return this.authServerClient
                 .build()
                 .post()
                 .uri("/api/v1/token")
-                .exchangeToMono(response -> response.bodyToMono(String.class));
+                .exchangeToMono(response -> response.bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {}));
     }
 
     private WebClient buildAuthServerWebClient(String token) {
