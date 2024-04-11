@@ -27,7 +27,7 @@ public class AuthController {
         return Mono.just(Map.of(STATUS, "success", TOKEN_VALID, true));
     }
 
-    @GetMapping("/token")
+    @PostMapping("/token")
     //TODO: forbid this endpoint in production
     public Mono<Map<String, String>> generateAuthenticationToken() {
         return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateToken()));

@@ -2,6 +2,7 @@ package org.umbrella;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.umbrella.client.AuthServiceClient;
 import org.umbrella.client.UserServiceClient;
 import org.umbrella.dto.EntrepreneurDto;
 import org.umbrella.dto.UserResponseDto;
@@ -14,11 +15,13 @@ import java.util.stream.Collectors;
 @Component
 public class UmbrellaFacade {
     private final UserServiceClient userServiceClient;
+    private final AuthServiceClient authServiceClient;
     private final ModelMapper mapper;
     private final EntrepreneurServiceInterface entrepreneurService;
 
-    public UmbrellaFacade(UserServiceClient userServiceClient, ModelMapper mapper, EntrepreneurServiceInterface entrepreneurService) {
+    public UmbrellaFacade(UserServiceClient userServiceClient, AuthServiceClient authServiceClient, ModelMapper mapper, EntrepreneurServiceInterface entrepreneurService) {
         this.userServiceClient = userServiceClient;
+        this.authServiceClient = authServiceClient;
         this.mapper = mapper;
         this.entrepreneurService = entrepreneurService;
     }
@@ -29,6 +32,7 @@ public class UmbrellaFacade {
      * @return The list of users as a List of UserResponseDto objects.
      */
     public List<UserResponseDto> getUsersFromUserService() {
+        Boolean tokenIsValid = authServiceClient.validateToken("token").block();
         return mapToDto(userServiceClient.getUsers(), UserResponseDto.class);
     }
 
