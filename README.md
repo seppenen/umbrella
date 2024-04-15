@@ -1,6 +1,7 @@
-# 'Umbrella' - A Platform for Managing Entrepreneurial Financial Transactions
+# Umbrella 
 
-This application aims to serve as a comprehensive platform for managing entrepreneurial financial transactions, billings, invoicing, and reporting. It's being developed using state-of-the-art technologies and frameworks such as Docker Compose, Java 17, Spring Boot 3.2, Spring Security 6, Spring Cloud, Spring Data, MVC, WebFlux, and PostgreSQL.
+"Umbrella" is aimed at creating a comprehensive solution to facilitate the management of business financial operations, billing processes, invoice generation, and financial reporting. This platform is being developed utilizing cutting-edge tools and frameworks such as Docker Compose, Java 17, Spring Boot 3.2, Spring Security 6, Spring Cloud, Spring Data, MVC, WebFlux, and PostgreSQL. 
+The project is divided into several microservices, each of which is responsible for a specific task. The services are as follows:
 
 ![diagram.jpg](diagram.jpg)
 High level architecture diagram.
