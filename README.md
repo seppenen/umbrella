@@ -1,8 +1,9 @@
-# 'Umbrella' microservices Project
+# 'Umbrella' - A Platform for Managing Entrepreneurial Financial Transactions
 
-This demo application utilize Docker Compose, Java 17, Spring Boot 3.2, Spring Security 6, Spring Cloud, Spring Data, MVC, WebFlux and PostgreSQL. It primarily focuses on managing entrepreneurial billing, collecting transactions, invoicing, and reporting.
+This application aims to serve as a comprehensive platform for managing entrepreneurial financial transactions, billings, invoicing, and reporting. It's being developed using state-of-the-art technologies and frameworks such as Docker Compose, Java 17, Spring Boot 3.2, Spring Security 6, Spring Cloud, Spring Data, MVC, WebFlux, and PostgreSQL.
 
 ![diagram.jpg](diagram.jpg)
+High level architecture diagram.
 
 ## Usage Guide
 ### Swagger UI
