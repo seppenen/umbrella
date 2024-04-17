@@ -1,13 +1,11 @@
-package com.service.userService.dto;
+package org.spring.authservice.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-public class UserResponseDto {
+public class UserEntityDto {
     private Long id;
     private String username;
     private String email;

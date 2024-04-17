@@ -16,7 +16,7 @@ public class LoggerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerService.class);
 
     public void logError(Throwable e, HttpStatus httpStatus) {
-        LOGGER.error("{}, HTTP Status: {}, stacktrace:{} {}", e, httpStatus.getReasonPhrase().toUpperCase(), System.lineSeparator(), e.getStackTrace());
+        LOGGER.error("Exception: {}, HTTP Status: {}", e.toString(), httpStatus.getReasonPhrase().toUpperCase(), e);
     }
 
     public <T> void logInfo(String message, HttpStatus status, T data) {

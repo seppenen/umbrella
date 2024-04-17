@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -28,6 +29,8 @@ public class ExceptionHandlers {
     private static final String RESPONSE_ENTITY_NOT_FOUND_ERROR = "Entity not found";
 
     public static final String RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION = "Failed to register user";
+
+    public static final String RESPONSE_USER_LOGIN_FAILED_EXCEPTION = "Login or password is incorrect";
 
     private final LoggerService loggerService;
     private final ApiErrorFactory apiErrorFactory;
@@ -72,6 +75,16 @@ public class ExceptionHandlers {
                 RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION,
                 "Server error occurred",
                 HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+        return handleExceptionAndResponse(
+                ex,
+                RESPONSE_USER_LOGIN_FAILED_EXCEPTION,
+                "",
+                HttpStatus.UNAUTHORIZED
         );
     }
 

@@ -8,12 +8,12 @@ import com.service.userService.exceptions.UserRegistrationFailedException;
 import com.service.userService.repository.UserRepository;
 import com.service.userService.service.LoggerService;
 import com.service.userService.service.UserService;
-import com.service.userService.service.UserServiceInterface;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
 
     @MockBean
-    private static UserServiceInterface userService;
+    private static UserFacade userFacade;
 
     @MockBean
     private static UserRepository userRepository;
@@ -41,7 +41,7 @@ public class UserServiceTest {
     public static void setUp() {
          userRepository = Mockito.mock(UserRepository.class);
          mapper = Mockito.mock(ObjectMapper.class);
-         userService = Mockito.mock(UserServiceInterface.class);
+         userFacade = Mockito.mock(UserFacade.class);
 
     }
 
@@ -66,14 +66,14 @@ public class UserServiceTest {
     void testGetUserValidId() {
         Long userId = 1L;
         UserEntity expectedUserEntity = new UserEntity();
-        expectedUserEntity.setName("test");
+        expectedUserEntity.setUsername("test");
 
         UserResponseDto expectedResponseDto = new UserResponseDto();
-        expectedResponseDto.setName("test");
+        expectedResponseDto.setUsername("test");
 
-        when(userService.getUser(userId)).thenReturn(expectedResponseDto);
+        when(userFacade.getUser(userId)).thenReturn(expectedResponseDto);
         when(mapper.convertValue(expectedUserEntity, UserResponseDto.class)).thenReturn(expectedResponseDto);
-        UserResponseDto actualResponseDto = userService.getUser(userId);
+        UserResponseDto actualResponseDto = userFacade.getUser(userId);
         assertEquals(expectedResponseDto, actualResponseDto);
     }
 
@@ -88,8 +88,8 @@ public class UserServiceTest {
     @Test
     void testGetUserInvalidId() {
         Long userId = 1L;
-        when(userService.getUser(userId)).thenThrow(EntityNotFoundException.class);
-        assertThrows(EntityNotFoundException.class, () -> userService.getUser(userId));
+        when(userFacade.getUser(userId)).thenThrow(EntityNotFoundException.class);
+        assertThrows(EntityNotFoundException.class, () -> userFacade.getUser(userId));
     }
 
     /*
@@ -102,9 +102,10 @@ public class UserServiceTest {
     void registerUserSuccessfulTest() {
 
         ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
+        PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
         UserRepository userRepository = Mockito.mock(UserRepository.class);
         LoggerService loggerService = Mockito.mock(LoggerService.class);
-        UserService userService = new UserService(userRepository, loggerService, objectMapper );
+        UserService userService = new UserService(userRepository, loggerService, passwordEncoder );
 
         UserEntity user = new UserEntity();
         UserRequestDto userRequestDto = new UserRequestDto();
@@ -114,20 +115,21 @@ public class UserServiceTest {
         Mockito.when(userRepository.save(any(UserEntity.class))).thenReturn(user);
         Mockito.when(objectMapper.convertValue(user, UserResponseDto.class)).thenReturn(userResponseDto);
 
-        assertEquals(userResponseDto, userService.registerUser(userRequestDto));
+        assertEquals(userResponseDto, userFacade.registerUser(userRequestDto));
     }
 
     @Test
     void registerUserFailedTest() {
+        PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
         ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         UserRepository userRepository = Mockito.mock(UserRepository.class);
         LoggerService loggerService = Mockito.mock(LoggerService.class);
-        UserService userService = new UserService(userRepository, loggerService, objectMapper );
+        UserService userService = new UserService(userRepository, loggerService, passwordEncoder );
 
         UserRequestDto userRequestDto = new UserRequestDto();
 
         Mockito.when(objectMapper.convertValue(userRequestDto, UserEntity.class)).thenThrow(IllegalStateException.class);
 
-        assertThrows(UserRegistrationFailedException.class, () -> userService.registerUser(userRequestDto));
+        assertThrows(UserRegistrationFailedException.class, () -> userFacade.registerUser(userRequestDto));
     }
 }

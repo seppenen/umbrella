@@ -16,7 +16,7 @@ public class LoggerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerService.class);
 
     public void logError(Throwable e, HttpStatusCode httpStatusCode) {
-        LOGGER.error("{}, HTTP Status: {}, stacktrace:{} {}", e, httpStatusCode.value(), System.lineSeparator(), e.getStackTrace());
+        LOGGER.error("Exception: {}, HTTP Status: {}", e.toString(), httpStatusCode.value(), e);
     }
 
     public <T> void logInfo(String message, HttpStatusCode httpStatusCode, T data) {

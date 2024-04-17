@@ -1,8 +1,10 @@
 package org.spring.authservice;
 
+import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.service.JwtService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -18,19 +20,27 @@ public class AuthController {
     private static final String TOKEN_KEY = "access_token";
     private final JwtService jwtService;
 
-    public AuthController(JwtService jwtService) {
+    private final AuthFacade authFacade;
+
+    public AuthController(JwtService jwtService, AuthFacade authFacade) {
         this.jwtService = jwtService;
+        this.authFacade = authFacade;
     }
 
-    @PostMapping("/auth")
+    @PostMapping("/authorize")
     public Mono<Map<String, Object>> validateToken() {
         return Mono.just(Map.of(STATUS, "success", TOKEN_VALID, true));
     }
 
-    @PostMapping("/token")
-    //TODO: forbid this endpoint in production
-    public Mono<Map<String, String>> generateAuthenticationToken() {
-        return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateToken()));
+    @PostMapping("/authenticate")
+    public Mono<Map<String, String>> authenticate(@RequestBody UserCredentialDto userRequestDto) {
+        return authFacade.authenticate(userRequestDto);
+    }
+
+    @PostMapping("/refresh-token")
+
+    public Mono<Map<String, String>> getRefreshToken() {
+        return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateRefreshToken()));
     }
 
     @GetMapping("/health")

@@ -29,9 +29,11 @@ public class SecurityConfig {
      */
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+
     }
 
     /**
@@ -42,14 +44,15 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
+
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(
                                 "swagger-ui/**",
                                 "v3/api-docs/**",
-                                "api/v1/token/**",
-                                "api/v1/health/**"
+                                "api/v1/health/**",
+                                "api/v1/authenticate/**"
                         )
                         .permitAll())
                         .authorizeExchange(exchanges -> exchanges
@@ -61,4 +64,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+
+
 }

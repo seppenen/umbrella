@@ -7,63 +7,53 @@ package com.service.userService;
  * Version: 1.0
  */
 
+import com.service.userService.dto.UserLoginDto;
+import com.service.userService.dto.UserLoginResponseDto;
 import com.service.userService.dto.UserRequestDto;
 import com.service.userService.dto.UserResponseDto;
 import com.service.userService.service.UserServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("/api/v1")
 public class UserServiceEndpoints {
     private final UserServiceInterface userService;
+    private final UserFacade userFacade;
 
-    public UserServiceEndpoints(UserServiceInterface userService) {
+    public UserServiceEndpoints(UserServiceInterface userService, UserFacade userFacade) {
         this.userService = userService;
+        this.userFacade = userFacade;
     }
 
-    /**
-     * Registers a new user.
-     *
-     * @param userRequestDto The request body containing user information
-     * @return ResponseEntity<UserResponseDto> The response entity with the created user information
-     */
+
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRequestDto userRequestDto) {
-        UserResponseDto userResponseDto = userService.registerUser(userRequestDto);
+        UserResponseDto userResponseDto = userFacade.registerUser(userRequestDto);
         return ResponseEntity.ok(userResponseDto);
     }
 
-    /**
-     * Retrieves a user by their ID.
-     *
-     * @param id The ID of the user to retrieve.
-     * @return ResponseEntity<UserResponseDto> The response entity with the retrieved user information.
-     */
-    @GetMapping("/user/{id}")
-    public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
-        UserResponseDto user = userService.getUser(id);
-        return ResponseEntity.ok(user);
+ @PostMapping("/login")
+    public Mono<UserLoginResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
+     UserLoginResponseDto user = userFacade.login(userLoginDto);
+        return Mono.just(user);
     }
 
-    /**
-     * Retrieves all users from the system.
-     *
-     * @return A list of UserResponseDto objects representing the user details.
-     */
+
     @GetMapping("/users")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        List<UserResponseDto> users = userService.getAllUsers();
+        List<UserResponseDto> users = userFacade.getAllUsers();
         return ResponseEntity.ok(users);
     }
 

@@ -1,15 +1,16 @@
 package com.service.userService.service;
 
-import com.service.userService.dto.UserRequestDto;
-import com.service.userService.dto.UserResponseDto;
+import com.service.userService.entity.UserEntity;
 
 import java.util.List;
 
 public interface UserServiceInterface {
 
-    UserResponseDto registerUser(UserRequestDto userRequestDto);
+    UserEntity loginUser(UserEntity userEntity);
 
-    UserResponseDto getUser(Long id);
+    UserEntity registerUser(UserEntity userEntity);
 
-    List<UserResponseDto> getAllUsers();
+    UserEntity getUser(Long id);
+
+    List<UserEntity> getAllUsers();
 }

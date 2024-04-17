@@ -23,7 +23,7 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     @Override
     public @NotNull Mono<Void> filter(@NotNull ServerWebExchange exchange, WebFilterChain chain) {
-        String token = jwtService.resolveToken(exchange);
+        String token = jwtService.extractToken(exchange);
         if (token != null && jwtService.validateToken(token)) {
             Authentication auth = new UsernamePasswordAuthenticationToken(token, token, new ArrayList<>());
             return chain.filter(exchange)
