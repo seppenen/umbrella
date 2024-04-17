@@ -12,7 +12,7 @@ tasks:
   clean-docker:
     silent: true
     cmds:
-      - echo "Stopping all running containers..."
+      - echo "Stopping all running containers..."÷
       - docker ps -q | xargs -r docker stop || echo "No running containers found."
       - echo "Removing all stopped containers..."
       - docker ps -a -q | xargs -r docker rm || echo "No containers to remove."
@@ -33,13 +33,13 @@ tasks:
     silent: true
     cmds:
       - echo "Removing all data from the database..."
-      - docker rm -f postgres && docker-compose up -d postgres-db-service
+      - docker rm -f postgres && docker-compose up -d postgres
 
   create-database:
     silent: true
     cmds:
       - echo "Creating new DB"
-      - docker-compose up -d postgres-db-service
+      - docker-compose up -d postgres
 
   redeploy:
     cmds:
