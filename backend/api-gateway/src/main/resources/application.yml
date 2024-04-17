@@ -9,14 +9,21 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
-            - AddRequestHeader=X-Request, api-gateway
+
         - id: umbrella-service
           uri: lb://umbrella-service
           predicates:
             - Path=/umbrella/**
           filters:
             - StripPrefix=1
-            - AddRequestHeader=X-Request, api-gateway
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+          filters:
+            - StripPrefix=1
+
 
       discovery:
         locator:
