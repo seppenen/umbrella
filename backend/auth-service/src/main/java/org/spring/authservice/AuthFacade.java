@@ -1,13 +1,11 @@
 package org.spring.authservice;
 
+import org.spring.authservice.dto.RefreshTokenResponseDto;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.service.AuthService;
 import org.spring.authservice.service.JwtService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
-import java.util.Collections;
-import java.util.Map;
 
 @Component
 public class AuthFacade {
@@ -19,8 +17,13 @@ public class AuthFacade {
         this.jwtService = jwtService;
     }
 
-    public Mono<Map<String, String>> authenticate(UserCredentialDto userCredentialDto) {
-        return authService.authenticate(userCredentialDto)
-                .then(Mono.just(Collections.singletonMap("token", jwtService.generateRefreshToken())));
+    public Mono<RefreshTokenResponseDto> authenticateUser(UserCredentialDto userCredentialDto) {
+        return authService.getAuthenticatedUser(userCredentialDto)
+                .flatMap(userEntityDto -> {
+                    String accessToken = jwtService.generateAccessToken();
+                    RefreshTokenResponseDto refreshTokenResponseDto = new RefreshTokenResponseDto();
+                    refreshTokenResponseDto.setRefresh_token(accessToken);
+                    return Mono.just(refreshTokenResponseDto);
+                });
     }
 }

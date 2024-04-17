@@ -9,21 +9,27 @@ package org.spring.authservice.exceptionHandlers;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
+import org.apache.http.auth.AuthenticationException;
 import org.spring.authservice.service.ApiResponseErrorFactory;
 import org.spring.authservice.service.LoggerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.apache.http.auth.AuthenticationException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 
-
-@ControllerAdvice
-public class GlobalExceptionHandlers {
+/**
+ * GlobalExceptionHandlers is a class responsible for handling global exceptions in the application.
+ * It extends the ResponseEntityExceptionHandler class and is annotated with @RestControllerAdvice.
+ * It provides error handling for various exceptions and logs the errors using the LoggerService class.
+ */
+@RestControllerAdvice
+public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
 
     private final LoggerService loggerService;
     private final ApiResponseErrorFactory apiErrorFactory;
@@ -41,13 +47,6 @@ public class GlobalExceptionHandlers {
     }
 
 
-
-    /**
-     * Handles AuthenticationException and SignatureException and returns an appropriate API response.
-     *
-     * @param ex The Exception object representing the exception.
-     * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
-     */
     @ExceptionHandler({AuthenticationException.class, SignatureException.class, JwtException.class})
     public Mono<Void> handleAuthenticationException(ServerWebExchange exchange, AuthenticationException ex) {
         //TODO: Catch the exception SignatureException
@@ -56,13 +55,14 @@ public class GlobalExceptionHandlers {
         return handleExceptionLogAndResponse(response, ex);
     }
 
+    @ExceptionHandler({BadCredentialsException.class})
+    public Mono<Void> handleBadCredentials(ServerWebExchange exchange, BadCredentialsException ex) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        return handleExceptionLogAndResponse(response, ex);
+    }
 
-    /**
-     * Handles the HttpMessageNotReadableException and returns an appropriate API response.
-     *
-     * @param ex The HttpMessageNotReadableException object representing the exception.
-     * @return An instance of ResponseEntity<ApiErrorResponse> that encapsulates the API error response.
-     */
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Mono<Void> httpMessageNotReadableException(ServerWebExchange exchange, AuthenticationException ex) {
         //TODO: Catch the exception SignatureException
@@ -73,16 +73,9 @@ public class GlobalExceptionHandlers {
 
 
 
-    /**
-     * Handles the exception, logs the error and generates an error response.
-     *
-     * @param response The server HTTP response.
-     * @param ex The authentication exception.
-     * @return A Mono representing the completion of the method.
-     */
-    private Mono<Void> handleExceptionLogAndResponse(ServerHttpResponse response, AuthenticationException ex) {
+    private Mono<Void> handleExceptionLogAndResponse(ServerHttpResponse response, Exception ex) {
         loggerService.logError(ex, response.getStatusCode());
-        return apiErrorFactory.createErrorResponse(response, null);
+        return apiErrorFactory.createErrorResponse(response, ex.getMessage());
 
     }
 }

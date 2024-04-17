@@ -1,5 +1,6 @@
 package org.spring.authservice;
 
+import org.spring.authservice.dto.RefreshTokenResponseDto;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.service.JwtService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,14 +34,14 @@ public class AuthController {
     }
 
     @PostMapping("/authenticate")
-    public Mono<Map<String, String>> authenticate(@RequestBody UserCredentialDto userRequestDto) {
-        return authFacade.authenticate(userRequestDto);
+    public Mono<RefreshTokenResponseDto> authenticate(@RequestBody UserCredentialDto userRequestDto) {
+        return authFacade.authenticateUser(userRequestDto);
     }
 
-    @PostMapping("/refresh-token")
+    @PostMapping("/access-token")
 
     public Mono<Map<String, String>> getRefreshToken() {
-        return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateRefreshToken()));
+        return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateAccessToken()));
     }
 
     @GetMapping("/health")

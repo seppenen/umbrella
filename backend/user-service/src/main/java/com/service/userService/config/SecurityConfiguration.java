@@ -22,10 +22,9 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/**")
+                        .requestMatchers("api/v1/login/**", "api/v1/register/**")
                         .permitAll()
-
-                );
+                        .anyRequest().authenticated());
 
         http.csrf( AbstractHttpConfigurer::disable );
 

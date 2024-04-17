@@ -49,7 +49,7 @@ public class UserService implements UserServiceInterface {
 
         UserEntity foundUser = optionalUser.get();
         if(!passwordEncoder.matches(userEntity.getPassword(), foundUser.getPassword())) {
-            throw new BadCredentialsException("Wrong password!");
+            throw new BadCredentialsException("Invalid password");
         }
         return foundUser;
     }

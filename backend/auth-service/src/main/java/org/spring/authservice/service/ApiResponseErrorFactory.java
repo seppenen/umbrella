@@ -3,12 +3,12 @@ package org.spring.authservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.spring.authservice.entity.ApiErrorResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
-import java.util.Objects;
 
 @Service
 public class ApiResponseErrorFactory {
@@ -24,13 +24,15 @@ public class ApiResponseErrorFactory {
             throw new RuntimeException("Error while mapping ApiErrorResponse to JSON", e);
         }
         String errorResponseJson = json.toString();
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         return writeResponse(response, errorResponseJson);
     }
 
     private ApiErrorResponse createApiErrorResponse(ServerHttpResponse response, String message) {
+
         ApiErrorResponse errorResponse = new ApiErrorResponse();
-        errorResponse.setStatus(Objects.requireNonNull(response.getStatusCode()).toString());
-        errorResponse.setError(response.getStatusCode().isError());
+        errorResponse.setStatus(response.getStatusCode().toString());
+        errorResponse.setDetail("Error while processing the request");
         errorResponse.setErrorCode(response.getStatusCode().value());
         errorResponse.setMessage(message);
         errorResponse.setTimeStamp(new Date());

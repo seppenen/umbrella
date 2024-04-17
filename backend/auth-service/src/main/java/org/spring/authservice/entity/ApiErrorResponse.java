@@ -8,12 +8,11 @@ import java.util.Date;
 
 @Setter
 @Getter
+
 public class ApiErrorResponse {
     private String status;
-    private int errorCode;
     private String message;
-    boolean error;
+    private int errorCode;
+    private String detail;
     private Date timeStamp;
-
-
 }
