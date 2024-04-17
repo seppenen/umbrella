@@ -35,7 +35,7 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public Mono<RefreshTokenResponseDto> authenticate(@RequestBody UserCredentialDto userRequestDto) {
-        return authFacade.authenticateUser(userRequestDto);
+        return authFacade.generateTokenIfAuthenticated(userRequestDto);
     }
 
     @PostMapping("/access-token")

@@ -15,7 +15,7 @@ public class AuthService {
         this.userServiceClient = userServiceClient;
     }
 
-    public Mono<UserEntityDto> getAuthenticatedUser(UserCredentialDto userCredentialDto) {
+    public Mono<UserEntityDto> requestAuthenticatedUser(UserCredentialDto userCredentialDto) {
         return userServiceClient.requestUserAuthentication(userCredentialDto);
     }
 

@@ -17,8 +17,8 @@ public class AuthFacade {
         this.jwtService = jwtService;
     }
 
-    public Mono<RefreshTokenResponseDto> authenticateUser(UserCredentialDto userCredentialDto) {
-        return authService.getAuthenticatedUser(userCredentialDto)
+    public Mono<RefreshTokenResponseDto> generateTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
+        return authService.requestAuthenticatedUser(userCredentialDto)
                 .flatMap(userEntityDto -> {
                     String accessToken = jwtService.generateAccessToken();
                     RefreshTokenResponseDto refreshTokenResponseDto = new RefreshTokenResponseDto();
