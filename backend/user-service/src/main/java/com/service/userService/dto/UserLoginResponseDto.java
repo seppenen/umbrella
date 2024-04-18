@@ -8,5 +8,4 @@ import lombok.Setter;
 public class UserLoginResponseDto {
     private Long id;
     private String email;
-    private String businessId;
 }

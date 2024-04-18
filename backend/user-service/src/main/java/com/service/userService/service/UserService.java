@@ -44,12 +44,12 @@ public class UserService implements UserServiceInterface {
     public UserEntity loginUser(UserEntity userEntity) {
         Optional<UserEntity> optionalUser = userRepository.findByEmail(userEntity.getEmail());
         if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException(String.format("User with email %s not found", userEntity.getUsername()));
+            throw new EntityNotFoundException(userEntity.getEmail());
         }
 
         UserEntity foundUser = optionalUser.get();
         if(!passwordEncoder.matches(userEntity.getPassword(), foundUser.getPassword())) {
-            throw new BadCredentialsException("Invalid password");
+            throw new BadCredentialsException(null);
         }
         return foundUser;
     }

@@ -14,6 +14,7 @@ import com.service.userService.dto.UserResponseDto;
 import com.service.userService.service.UserServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,13 +28,13 @@ import java.util.Map;
 
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/v1")
 public class UserServiceEndpoints {
-    private final UserServiceInterface userService;
     private final UserFacade userFacade;
 
     public UserServiceEndpoints(UserServiceInterface userService, UserFacade userFacade) {
-        this.userService = userService;
+
         this.userFacade = userFacade;
     }
 

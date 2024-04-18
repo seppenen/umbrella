@@ -27,7 +27,6 @@ public class UserFacade {
         UserLoginResponseDto userLoginResponseDto = convert(userEntity, UserLoginResponseDto.class);
         userLoginResponseDto.setId(userLoginResponseDto.getId());
         userLoginResponseDto.setEmail(userEntity.getEmail());
-        userLoginResponseDto.setBusinessId(userEntity.getBusinessId());
         return userLoginResponseDto;
     }
 

@@ -1,14 +1,8 @@
 package org.spring.authservice.exceptionHandlers;
 
-/**
- * Author: Aleksandr Seppenen
- * Date: 05-04-2023
- * Version: 1.0
- */
-
-
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.http.auth.AuthenticationException;
 import org.spring.authservice.service.ApiResponseErrorFactory;
 import org.spring.authservice.service.LoggerService;
@@ -22,61 +16,52 @@ import org.springframework.web.reactive.result.method.annotation.ResponseEntityE
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-
-/**
- * GlobalExceptionHandlers is a class responsible for handling global exceptions in the application.
- * It extends the ResponseEntityExceptionHandler class and is annotated with @RestControllerAdvice.
- * It provides error handling for various exceptions and logs the errors using the LoggerService class.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
-
     private final LoggerService loggerService;
     private final ApiResponseErrorFactory apiErrorFactory;
 
-
     public GlobalExceptionHandlers(LoggerService loggerService, ApiResponseErrorFactory apiErrorFactory) {
         this.loggerService = loggerService;
-
         this.apiErrorFactory = apiErrorFactory;
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public void processRuntimeException(RuntimeException ex) {
+    public void logRuntimeException(RuntimeException ex) {
         loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     @ExceptionHandler({AuthenticationException.class, SignatureException.class, JwtException.class})
     public Mono<Void> handleAuthenticationException(ServerWebExchange exchange, AuthenticationException ex) {
-        //TODO: Catch the exception SignatureException
-         ServerHttpResponse response = exchange.getResponse();
-         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return handleExceptionLogAndResponse(response, ex);
+        return processException(exchange, ex);
     }
 
     @ExceptionHandler({BadCredentialsException.class})
     public Mono<Void> handleBadCredentials(ServerWebExchange exchange, BadCredentialsException ex) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return handleExceptionLogAndResponse(response, ex);
+        return processException(exchange, ex);
+    }
+
+    @ExceptionHandler({EntityNotFoundException.class})
+    public Mono<Void> handleEntityNotFoundException(ServerWebExchange exchange, EntityNotFoundException ex) {
+        return processException(exchange, ex);
     }
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Mono<Void> httpMessageNotReadableException(ServerWebExchange exchange, AuthenticationException ex) {
-        //TODO: Catch the exception SignatureException
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return handleExceptionLogAndResponse(response, ex);
+    public Mono<Void> handleHttpMessageNotReadableException(ServerWebExchange exchange, HttpMessageNotReadableException ex) {
+        return processException(exchange, ex);
     }
 
-
-
-    private Mono<Void> handleExceptionLogAndResponse(ServerHttpResponse response, Exception ex) {
+    private Mono<Void> processException(ServerWebExchange exchange, Exception ex) {
+        ServerHttpResponse response = setResponseUnauthorized(exchange);
         loggerService.logError(ex, response.getStatusCode());
         return apiErrorFactory.createErrorResponse(response, ex.getMessage());
+    }
 
+    private ServerHttpResponse setResponseUnauthorized(ServerWebExchange exchange) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        return response;
     }
 }
 

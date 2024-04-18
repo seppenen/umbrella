@@ -13,7 +13,6 @@ import java.util.Date;
 @Service
 public class ApiResponseErrorFactory {
 
-
     public Mono<Void> createErrorResponse(ServerHttpResponse response, String message) {
         ApiErrorResponse errorResponse = createApiErrorResponse(response, message);
         StringBuilder json = new StringBuilder();
@@ -29,7 +28,6 @@ public class ApiResponseErrorFactory {
     }
 
     private ApiErrorResponse createApiErrorResponse(ServerHttpResponse response, String message) {
-
         ApiErrorResponse errorResponse = new ApiErrorResponse();
         errorResponse.setStatus(response.getStatusCode().toString());
         errorResponse.setDetail("Error while processing the request");

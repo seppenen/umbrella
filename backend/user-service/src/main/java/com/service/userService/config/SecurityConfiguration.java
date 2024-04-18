@@ -22,7 +22,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("api/v1/login/**", "api/v1/register/**")
+                        .requestMatchers(
+                                "api/v1/login/**",
+                                "api/v1/register/**",
+                                "v3/swagger-config/**",
+                                "v3/api-docs/**"
+                                )
                         .permitAll()
                         .anyRequest().authenticated());
 

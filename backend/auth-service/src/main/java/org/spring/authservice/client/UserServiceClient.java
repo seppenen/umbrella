@@ -4,15 +4,14 @@ package org.spring.authservice.client;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.dto.UserEntityDto;
 import org.spring.authservice.entity.ApiErrorResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.spring.authservice.exceptions.HttpRequestException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 
 @Component
-public class UserServiceClient extends BaseClient {
+public class UserServiceClient extends BaseClientResolver {
 
     private final WebClient userServiceWebClient;
 
@@ -25,10 +24,9 @@ public class UserServiceClient extends BaseClient {
                 .uri("/login")
                 .bodyValue(userCredentialDto)
                 .retrieve()
-                .onStatus(httpStatus -> httpStatus.equals(HttpStatus.UNAUTHORIZED),
-                        clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                        .flatMap(errorResponse -> Mono.error(new BadCredentialsException(errorResponse.getMessage()))))
+                .onStatus(this::isClientOrServerError, clientResponse ->
+                      clientResponse.bodyToMono(ApiErrorResponse.class)
+                              .flatMap(errorResponse -> Mono.error(new HttpRequestException(errorResponse.getErrorCode(), errorResponse.getMessage()))))
                 .bodyToMono(UserEntityDto.class);
-
     }
 }

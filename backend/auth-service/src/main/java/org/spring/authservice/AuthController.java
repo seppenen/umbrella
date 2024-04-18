@@ -3,6 +3,7 @@ package org.spring.authservice;
 import org.spring.authservice.dto.RefreshTokenResponseDto;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.service.JwtService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/v1")
 public class AuthController {
     private static final String STATUS = "status";
