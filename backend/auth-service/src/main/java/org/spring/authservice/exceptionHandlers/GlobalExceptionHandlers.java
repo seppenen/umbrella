@@ -16,6 +16,8 @@ import org.springframework.web.reactive.result.method.annotation.ResponseEntityE
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 @RestControllerAdvice
 public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
     private final LoggerService loggerService;
@@ -26,35 +28,22 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
         this.apiErrorFactory = apiErrorFactory;
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public void logRuntimeException(RuntimeException ex) {
-        loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler({AuthenticationException.class, SignatureException.class, JwtException.class})
-    public Mono<Void> handleAuthenticationException(ServerWebExchange exchange, AuthenticationException ex) {
-        return processException(exchange, ex);
-    }
-
-    @ExceptionHandler({BadCredentialsException.class})
-    public Mono<Void> handleBadCredentials(ServerWebExchange exchange, BadCredentialsException ex) {
-        return processException(exchange, ex);
-    }
-
-    @ExceptionHandler({EntityNotFoundException.class})
-    public Mono<Void> handleEntityNotFoundException(ServerWebExchange exchange, EntityNotFoundException ex) {
-        return processException(exchange, ex);
-    }
-
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Mono<Void> handleHttpMessageNotReadableException(ServerWebExchange exchange, HttpMessageNotReadableException ex) {
+    @ExceptionHandler({
+            RuntimeException.class,
+            AuthenticationException.class,
+            SignatureException.class,
+            JwtException.class,
+            BadCredentialsException.class,
+            EntityNotFoundException.class,
+            HttpMessageNotReadableException.class
+    })
+    public Mono<Void> handleException(ServerWebExchange exchange, Exception ex) {
         return processException(exchange, ex);
     }
 
     private Mono<Void> processException(ServerWebExchange exchange, Exception ex) {
         ServerHttpResponse response = setResponseUnauthorized(exchange);
-        loggerService.logError(ex, response.getStatusCode());
+        loggerService.logError(ex, Objects.requireNonNull(response.getStatusCode()));
         return apiErrorFactory.createErrorResponse(response, ex.getMessage());
     }
 
