@@ -42,10 +42,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public UserEntity loginUser(UserEntity userEntity) {
-        Optional<UserEntity> optionalUser = userRepository.findByEmail(userEntity.getEmail());
-        if(optionalUser.isEmpty()) {
-            throw new BadCredentialsException(null);
-        }
+        Optional<UserEntity> optionalUser = userRepository.findByEmail(userEntity.getEmail()).orElseThrow(() -> throwNotFound(userEntity.getEmail());
 
         UserEntity foundUser = optionalUser.get();
         if(!passwordEncoder.matches(userEntity.getPassword(), foundUser.getPassword())) {
