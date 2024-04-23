@@ -4,25 +4,27 @@ spring:
     gateway:
       routes:
         - id: auth-service
-          uri: lb://auth-service
+          uri: http://auth-service:8080
           predicates:
             - Path=/auth/**
           filters:
             - StripPrefix=1
 
         - id: umbrella-service
-          uri: lb://umbrella-service
+          uri: http://umbrella-service:8080
           predicates:
             - Path=/umbrella/**
           filters:
             - StripPrefix=1
 
+
         - id: user-service
-          uri: lb://user-service
+          uri: http://user-service:8080
           predicates:
             - Path=/users/**
           filters:
             - StripPrefix=1
+
 
 
       discovery:

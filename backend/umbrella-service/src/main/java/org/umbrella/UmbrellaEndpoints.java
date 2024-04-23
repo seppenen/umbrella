@@ -1,6 +1,7 @@
 package org.umbrella;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +15,8 @@ import org.umbrella.dto.UserResponseDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/v1")
 public class UmbrellaEndpoints {
 
@@ -78,7 +79,7 @@ public class UmbrellaEndpoints {
      * @return a ResponseEntity containing the created EntrepreneurDto object
      */
     @PostMapping("/entrepreneur")
-    public ResponseEntity<EntrepreneurDto> createEntrepreneurEntity(@RequestBody EntrepreneurDto entrepreneurDto) {
+    public ResponseEntity<EntrepreneurDto> createEntrepreneur(@RequestBody EntrepreneurDto entrepreneurDto) {
         EntrepreneurDto createdEntrepreneur = umbrellaFacade.createAndReturnEntrepreneur(entrepreneurDto);
         return ResponseEntity.ok(createdEntrepreneur);
     }
