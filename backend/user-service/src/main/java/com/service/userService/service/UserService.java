@@ -25,7 +25,8 @@ public class UserService implements UserServiceInterface {
     private final LoggerService loggerService;
     private final PasswordEncoder passwordEncoder;
     public static final String CREATED_MESSAGE = "User created successfully";
-    private static final String USER_NOT_FOUND_MESSAGE = "User %d not found";
+    private static final String USER_NOT_FOUND_MESSAGE = "User %s not found";
+    private static final String PASSWORD_NOT_MATCH_MESSAGE = "Password does not match for user: %s";
 
 
     public UserService(
@@ -44,12 +45,12 @@ public class UserService implements UserServiceInterface {
     public UserEntity loginUser(UserEntity userEntity) {
         Optional<UserEntity> optionalUser = userRepository.findByEmail(userEntity.getEmail());
         if(optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, userEntity.getEmail()));
         }
 
         UserEntity foundUser = optionalUser.get();
         if(!passwordEncoder.matches(userEntity.getPassword(), foundUser.getPassword())) {
-            throw new BadCredentialsException(null);
+            throw new BadCredentialsException(String.format(PASSWORD_NOT_MATCH_MESSAGE, userEntity.getEmail()));
         }
         return foundUser;
     }
