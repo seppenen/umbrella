@@ -25,7 +25,7 @@ public class UserService implements UserServiceInterface {
     private final LoggerService loggerService;
     private final PasswordEncoder passwordEncoder;
     public static final String CREATED_MESSAGE = "User created successfully";
-    private static final String USER_NOT_FOUND_MESSAGE = "User with id %d not found";
+    private static final String USER_NOT_FOUND_MESSAGE = "User %d not found";
 
 
     public UserService(
@@ -43,8 +43,8 @@ public class UserService implements UserServiceInterface {
     @Override
     public UserEntity loginUser(UserEntity userEntity) {
         Optional<UserEntity> optionalUser = userRepository.findByEmail(userEntity.getEmail());
-        if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException(userEntity.getEmail());
+        if(optionalUser.isEmpty()) {
+            throw new BadCredentialsException(null);
         }
 
         UserEntity foundUser = optionalUser.get();
