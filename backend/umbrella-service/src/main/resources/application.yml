@@ -1,14 +1,22 @@
 
-
 # SpringDoc Configuration
+
 springdoc:
+
+  api-docs:
+    enabled: true
   swagger-ui:
-    configUrl: /v3/api-docs/swagger-config
-    url: /v3/api-docs
+    enabled: true
+    configUrl: http://localhost:8080/v3/api-docs/swagger-config
+    url: http://localhost:8080/v3/api-docs
     urls:
-      - name: umbrella-service
-        url: /v3/api-docs
-      - name: user-service
+      - name: Umbrella Service
+        url: http://localhost:8080/v3/api-docs
+      - name: User Service
+        url: http://localhost:8081/v3/api-docs
+      - name: Auth Service
         url: http://localhost:8082/v3/api-docs
-    oauth:
-      use-basic-authentication-with-access-code-grant:
+
+
+
+
