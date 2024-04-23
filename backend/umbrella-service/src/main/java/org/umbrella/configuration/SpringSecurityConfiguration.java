@@ -24,9 +24,6 @@ public class SpringSecurityConfiguration {
     @Autowired
     AuthServiceFilter authServiceFilter;
 
-    public SpringSecurityConfiguration() {
-    }
-
     /**
      * Configures and returns a SecurityFilterChain for the given HttpSecurity.
      *
@@ -38,17 +35,11 @@ public class SpringSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(
-                                "swagger-ui/**",
-                                "v3/api-docs/**",
-                                "api/v1/refresh-token/**",
-                                "api/v1/health/**"
-                        )
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/**")
                         .permitAll()
-                        .requestMatchers("api/v1/**").authenticated()
                 )
-                .addFilterBefore(authServiceFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(authServiceFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler((request, response, accessDeniedException) ->

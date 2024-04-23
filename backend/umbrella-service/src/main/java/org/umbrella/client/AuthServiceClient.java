@@ -4,45 +4,39 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.umbrella.service.JwtService;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
 @Component
-public class AuthServiceClient {
-    private final WebClient.Builder authServerClient;
+public class AuthServiceClient extends BaseClient {
 
-    public AuthServiceClient(WebClient.Builder webClientBuilder) {
-        this.authServerClient = webClientBuilder.baseUrl("http://localhost/auth");
+    private final JwtService jwtService;
+    private final WebClient authServerWebClient;
+
+
+    public AuthServiceClient(JwtService jwtService, WebClient authServerWebClient) {
+        this.jwtService = jwtService;
+        this.authServerWebClient = authServerWebClient;
+    }
+
+
+    //TODO: Method used for testing purposes only
+    public Mono<Map<String, String>> requestToken() {
+        String token = jwtService.generateAccessToken();
+        return super.buildAuthServerWebClient(authServerWebClient, token)
+                .post()
+                .uri("/token")
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
+                });
     }
 
     public Mono<Boolean> validateToken(String token) {
-        WebClient webClient = buildAuthServerWebClient(token);
-        return validateTokenWithWebClient(webClient);
-    }
-
-    public Mono<Map<String, String>> requestToken() {
-        return this.authServerClient
-                .build()
-                .post()
-                .uri("/api/v1/token")
-                .exchangeToMono(response -> response.bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {}));
-    }
-
-    private WebClient buildAuthServerWebClient(String token) {
-        return this.authServerClient
-                .build()
-                .mutate()
-                .defaultHeaders(headers -> {
-                    headers.setBearerAuth(token);
-                    headers.set("X-Request", "api-gateway");
-                })
-                .build();
-    }
-
-    private Mono<Boolean> validateTokenWithWebClient(WebClient webClient) {
+        WebClient webClient = super.buildAuthServerWebClient(authServerWebClient, token);
         return webClient.post()
-                .uri("/api/v1/auth")
+                .uri("/validate")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
                 .onErrorResume(e -> Mono.just(false));
     }

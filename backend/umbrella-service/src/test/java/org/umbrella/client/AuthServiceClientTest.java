@@ -4,11 +4,12 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.umbrella.service.JwtService;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
@@ -20,18 +21,25 @@ public class AuthServiceClientTest {
 
     private static final String ACCESS_TOKEN = "access_token";
 
-    @Autowired
+    @MockBean
     private WebTestClient webTestClient;
 
+    @MockBean
     private AuthServiceClient authServiceClient;
+    @MockBean
     private MockWebServer mockWebServer;
-    private WebClient.Builder webClientBuilder;
+
+    @MockBean
+    private WebClient webClient;
+
+    @MockBean
+    private JwtService jwtService;
 
     @BeforeEach
     void setUp() throws IOException {
         this.mockWebServer = new MockWebServer();
         this.mockWebServer.start();
-        this.authServiceClient = new AuthServiceClient(webClientBuilder);
+        this.authServiceClient = new AuthServiceClient(jwtService, webClient);
     }
 
     void setupMockServerResponse(int responseCode, String responseBody) {

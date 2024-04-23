@@ -32,8 +32,9 @@ public class UmbrellaFacade {
      * @return The list of users as a List of UserResponseDto objects.
      */
     public List<UserResponseDto> getUsersFromUserService() {
-        Boolean tokenIsValid = authServiceClient.validateToken("token").block();
-        return mapToDto(userServiceClient.getUsers(), UserResponseDto.class);
+
+        //TODO: Implement this method
+        return mapToDto(userServiceClient.getUsers("token"), UserResponseDto.class);
     }
 
     /**
