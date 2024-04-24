@@ -14,7 +14,6 @@ export function LoginForm({ setFormType }:LoginFormProps) {
                     Sign in to your account
                 </h2>
             </div>
-            {/* ...rest of form implementation */ }
             <div className="mt-10  text-sm text-gray-500">
                 <form action="#" method="POST" className="space-y-6">
                     <div>
