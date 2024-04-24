@@ -7,6 +7,7 @@ vars:
   AUTH_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/auth-service'
   USER_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/user-service'
   GATEWAY_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/api-gateway'
+  FRONT_END_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/frontend/umbrella'
 
 tasks:
   clean-docker:
@@ -41,7 +42,23 @@ tasks:
       - echo "Creating new DB"
       - docker-compose up -d postgres
 
-  redeploy:
+  redeploy-frontend:
+    cmds:
+      - |
+        echo "Starting task for {{.SERVICE}}"
+        echo "Stopping {{.SERVICE}} service container..."
+        docker stop {{.SERVICE}} || echo "No {{.SERVICE}} running container found."
+        echo "Removing {{.SERVICE}} service container..."
+        docker rm {{.SERVICE}} || echo "No {{.SERVICE}} container to remove."
+        echo "Removing {{.SERVICE}} service image..."
+        docker rmi {{.SERVICE}} || echo "No {{.SERVICE}} image to remove."
+        echo "Building in frontend/{{.SERVICE}} directory"
+        cd frontend/{{.SERVICE}} && npm install && npm run build
+        echo "Creating new {{.SERVICE}} service container..."
+        docker-compose up -d {{.SERVICE}}
+    silent: true
+
+  redeploy-backend:
     cmds:
       - |
         echo "Starting task for {{.SERVICE}}"
