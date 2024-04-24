@@ -4,8 +4,8 @@ interface FormValues {
     email: string;
     password: string;
 }
-export const useForm = (initialValues: FormValues): [FormValues, ChangeEventHandler<HTMLInputElement>] => {
-    const [values, setValues] = useState<FormValues>(initialValues);
+export const useForm = (initialValues: FormValues) => {
+    const [values, setValues] = useState(initialValues);
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
         setValues(prevState => ({
@@ -14,5 +14,5 @@ export const useForm = (initialValues: FormValues): [FormValues, ChangeEventHand
         }));
     }
 
-    return [values, handleChange];
+    return { values, handleChange };
 };

@@ -6,7 +6,7 @@ interface LoginFormProps {
 }
 export function LoginForm({ setFormType }:LoginFormProps) {
 
-    const [values, handleChange] = useForm({ email: '', password: '' });
+    const { values, handleChange } = useForm({ email: '', password: '' });
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
