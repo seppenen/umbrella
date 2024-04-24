@@ -1,7 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 import {Header} from "./components/Header";
-import { gsap } from "gsap"
+import {gsap} from "gsap"
 
 
 function App() {
