@@ -1,25 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+
+import {Header} from "./components/Header";
+
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <>
+          <Header />
+
+
+          <div className="flex flex-col items-center justify-center min-h-screen text-center py-20 bg-white-500">
+              <h1 className="text-6xl font-bold text-gray-700 mb-4">Hello, Umbrella!</h1>
+              <p className="text-2xl text-gray-700 mb-4">Finances should be simple.</p>
+              <a
+                  className="font-custom py-3 px-10 bg-white hover:bg-gray-200 text-blue-500 font-semibold rounded-lg"
+                  href="#"
+                  rel="noopener noreferrer"
+              >
+                  Join us
+              </a>
+          </div>
+      </>
   );
 }
 
