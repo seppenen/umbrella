@@ -8,9 +8,10 @@ export const useForm = (initialValues: FormValues) => {
     const [values, setValues] = useState(initialValues);
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+        const { name, value } = e.currentTarget;
         setValues(prevState => ({
             ...prevState,
-            [e.currentTarget.name]: e.currentTarget.value
+            [name]: value
         }));
     }
 
