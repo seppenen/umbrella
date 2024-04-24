@@ -9,46 +9,81 @@ package org.umbrella.exceptionHandlers;
 
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.umbrella.entity.ApiErrorResponse;
 import org.umbrella.service.ApiResponseErrorFactory;
 import org.umbrella.service.LoggerService;
 
+@Order(1)
 @ControllerAdvice
-public class GlobalExceptionHandlers  {
+public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
+    private static final String INTERNAL_ERROR_EXCEPTION = "An internal error has occurred";
+    private static final String RESPONSE_INVALID_JSON_EXCEPTION = "Invalid JSON format";
+
+    private static final String UNAUTHORIZED_ACCESS = "Unauthorized access";
+    private static final String RESPONSE_ENTITY_NOT_FOUND_ERROR = "Entity not found";
+    public static final String RESPONSE_USER_REGISTRATION_FAILED_EXCEPTION = "Failed to register user";
 
     private final LoggerService loggerService;
     private final ApiResponseErrorFactory apiErrorFactory;
 
+
     public GlobalExceptionHandlers(LoggerService loggerService, ApiResponseErrorFactory apiErrorFactory) {
         this.loggerService = loggerService;
+
         this.apiErrorFactory = apiErrorFactory;
     }
 
-    @ExceptionHandler({
-            AuthenticationException.class,
-            SignatureException.class,
-            EntityNotFoundException.class,
-            HttpMessageNotReadableException.class
-    })
-    public ResponseEntity<ApiErrorResponse> handleGeneralException(Exception ex) {
-        if (ex instanceof AuthenticationException || ex instanceof SignatureException) {
-            return handleExceptionLogAndResponse(ex, "Unauthorized access", "", HttpStatus.UNAUTHORIZED);
-        } else if (ex instanceof HttpMessageNotReadableException) {
-            return handleExceptionLogAndResponse(ex, "Invalid JSON format", "The provided JSON is not valid", HttpStatus.BAD_REQUEST);
-        } else if (ex instanceof EntityNotFoundException) {
-            return handleExceptionLogAndResponse(ex, "Entity not found", "Entity is null or not found", HttpStatus.UNAUTHORIZED);
-        } else {
-            // handle general exceptions
-            return handleExceptionLogAndResponse(ex, "An internal error has occurred", "", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @ExceptionHandler(RuntimeException.class)
+    public void processRuntimeException(RuntimeException ex) {
+        loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    @ExceptionHandler({AuthenticationException.class, SignatureException.class})
+    public ResponseEntity<ApiErrorResponse> handleAuthenticationException(Exception ex) {
+        //TODO: Catch the exception SignatureException
+        return handleExceptionLogAndResponse(
+                ex,
+                UNAUTHORIZED_ACCESS,
+                "",
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
+
+    @Override
+    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ResponseEntity<ApiErrorResponse> responseEntity = handleExceptionLogAndResponse(
+                ex,
+                RESPONSE_INVALID_JSON_EXCEPTION,
+                "The provided JSON is not valid",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
+    }
+
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return handleExceptionLogAndResponse(
+                ex,
+                RESPONSE_ENTITY_NOT_FOUND_ERROR,
+                "Entity is null or not found",
+                HttpStatus.NOT_FOUND
+        );
+    }
+
 
     private ResponseEntity<ApiErrorResponse> handleExceptionLogAndResponse(
             Throwable ex,
