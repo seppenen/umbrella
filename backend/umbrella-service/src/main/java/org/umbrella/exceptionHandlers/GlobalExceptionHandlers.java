@@ -16,13 +16,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.umbrella.entity.ApiErrorResponse;
 import org.umbrella.service.ApiResponseErrorFactory;
 import org.umbrella.service.LoggerService;
 
 @ControllerAdvice
-public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandlers  {
 
     private final LoggerService loggerService;
     private final ApiResponseErrorFactory apiErrorFactory;
@@ -38,7 +37,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
             EntityNotFoundException.class,
             HttpMessageNotReadableException.class
     })
-    public ResponseEntity<ApiErrorResponse> handleException(Exception ex) {
+    public ResponseEntity<ApiErrorResponse> handleGeneralException(Exception ex) {
         if (ex instanceof AuthenticationException || ex instanceof SignatureException) {
             return handleExceptionLogAndResponse(ex, "Unauthorized access", "", HttpStatus.UNAUTHORIZED);
         } else if (ex instanceof HttpMessageNotReadableException) {
