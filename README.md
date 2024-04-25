@@ -8,7 +8,7 @@ High level architecture diagram.
 
 ## Usage Guide
 ### Swagger UI
-This can be accessed via `http://localhost:8761/swagger-ui/index.html`.
+This can be accessed via `http://localhost:8083/swagger-ui/index.html`.
 
 ### Eureka
 This can be accessed via `http://localhost:8761

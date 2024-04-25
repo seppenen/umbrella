@@ -7,11 +7,11 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
-    configUrl: http://localhost:8080/v3/api-docs/swagger-config
-    url: http://localhost:8080/v3/api-docs
+    configUrl: http://localhost:8083/v3/api-docs/swagger-config
+    url: http://localhost:8083/v3/api-docs
     urls:
       - name: Umbrella Service
-        url: http://localhost:8080/v3/api-docs
+        url: http://localhost:8083/v3/api-docs
       - name: User Service
         url: http://localhost:8081/v3/api-docs
       - name: Auth Service
