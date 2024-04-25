@@ -15,20 +15,8 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    /**
-     * The JwtAuthenticationFilter class is responsible for authenticating requests by validating JWT tokens.
-     * It implements the WebFilter interface.
-     *
-     * This filter checks if an incoming request contains a JWT token in the Authorization header and valid signature.
-     * If a valid token is found, it creates and sets an Authentication object with the token as its principal.
-     * If the request does not contain a valid token, it continues the filter chain without modifying the
-     * request or setting any authentication information.
-     *
-     * If the token validation fails, the authentication failure is handled by a delegated ServerAuthenticationEntryPoint,
-     * which sets the response status to UNAUTHORIZED and returns an error response.
-     */
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -36,12 +24,6 @@ public class SecurityConfig {
 
     }
 
-    /**
-     * This method configures the security filter chain for server-side HTTP security.
-     *
-     * @param http The ServerHttpSecurity object used to configure the security.
-     * @return The configured SecurityWebFilterChain object.
-     */
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
 

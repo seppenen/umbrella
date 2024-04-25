@@ -1,7 +1,7 @@
 package org.spring.authservice.exceptionHandlers;
 
 import io.jsonwebtoken.JwtException;
-import org.spring.authservice.service.ApiResponseErrorFactory;
+import org.spring.authservice.utils.ApiResponseErrorFactory;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;

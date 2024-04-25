@@ -40,7 +40,7 @@ public class JwtService {
     private String createToken(Map<String, Object> claims, long expirationTime) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuer("api-gateway")
+                .setIssuer("auth-service")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();

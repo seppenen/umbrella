@@ -18,11 +18,14 @@ public class AuthFacade {
     }
 
     public Mono<RefreshTokenResponseDto> generateTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
+
+        //TODO:Implement token state
         return authService.requestAuthenticatedUser(userCredentialDto)
                 .flatMap(userEntityDto -> {
-                    String accessToken = jwtService.generateAccessToken();
+                    String refreshToken = jwtService.generateRefreshToken();
+                    //authService.saveToken(refreshToken, userEntityDto.getUsername());
                     RefreshTokenResponseDto refreshTokenResponseDto = new RefreshTokenResponseDto();
-                    refreshTokenResponseDto.setRefresh_token(accessToken);
+                    refreshTokenResponseDto.setRefreshToken(refreshToken);
                     return Mono.just(refreshTokenResponseDto);
                 });
     }

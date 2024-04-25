@@ -30,19 +30,20 @@ public class AuthController {
         this.authFacade = authFacade;
     }
 
+    //TODO: this method validate access token
     @PostMapping("/authorize")
     public Mono<Map<String, Object>> validateToken() {
         return Mono.just(Map.of(STATUS, "success", TOKEN_VALID, true));
     }
 
+    //TODO:This method creates a new refresh token
     @PostMapping("/authenticate")
     public Mono<RefreshTokenResponseDto> authenticate(@RequestBody UserCredentialDto userRequestDto) {
         return authFacade.generateTokenIfAuthenticated(userRequestDto);
     }
 
     @PostMapping("/access-token")
-
-    public Mono<Map<String, String>> getRefreshToken() {
+    public Mono<Map<String, String>> getAccessToken() {
         return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateAccessToken()));
     }
 

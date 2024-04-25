@@ -1,4 +1,4 @@
-package org.spring.authservice.service;
+package org.spring.authservice.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

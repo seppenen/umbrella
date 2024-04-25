@@ -1,6 +1,6 @@
 package org.spring.authservice.exceptionHandlers;
 
-import org.spring.authservice.service.ApiResponseErrorFactory;
+import org.spring.authservice.utils.ApiResponseErrorFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.AuthenticationException;
