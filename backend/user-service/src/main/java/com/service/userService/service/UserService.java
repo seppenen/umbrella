@@ -7,7 +7,7 @@ package com.service.userService.service;
  */
 
 import com.service.userService.entity.UserEntity;
-import com.service.userService.exceptions.UserRegistrationFailedException;
+import com.service.userService.exceptions.EntityPersistenceException;
 import com.service.userService.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -63,7 +63,7 @@ public class UserService implements UserServiceInterface {
             loggerService.logInfo(CREATED_MESSAGE, HttpStatus.OK, persistedUser);
             return persistedUser;
         } catch (Exception e) {
-            throw new UserRegistrationFailedException(e);
+            throw new EntityPersistenceException(e);
         }
     }
 

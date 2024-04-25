@@ -6,33 +6,47 @@ package com.service.userService.config;
  * Version: 1.0
  */
 
+import com.service.userService.filters.AuthServiceFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebFluxSecurity
 public class SecurityConfiguration {
 
+    private final AuthServiceFilter authServiceFilter;
+
+    public SecurityConfiguration(AuthServiceFilter authServiceFilter) {
+        this.authServiceFilter = authServiceFilter;
+    }
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
+
+        http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(
+                                "swagger-ui/**",
+                                "v3/api-docs/**",
+                                "api/v1/health/**",
                                 "api/v1/login/**",
-                                "api/v1/register/**",
-                                "v3/swagger-config/**",
-                                "v3/api-docs/**"
-                                )
-                        .permitAll()
-                        .anyRequest().authenticated());
-
-        http.csrf( AbstractHttpConfigurer::disable );
-
+                                "api/v1/register/**"
+                        )
+                        .permitAll())
+                .authorizeExchange(exchanges -> exchanges
+                        .anyExchange().authenticated())
+                .addFilterBefore(authServiceFilter, SecurityWebFiltersOrder.AUTHORIZATION)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new DelegatedServerAuthenticationEntryPoint())
+                );
         return http.build();
     }
     @Bean

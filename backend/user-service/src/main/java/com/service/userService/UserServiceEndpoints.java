@@ -39,6 +39,7 @@ public class UserServiceEndpoints {
     }
 
 
+
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRequestDto userRequestDto) {
         UserResponseDto userResponseDto = userFacade.registerUser(userRequestDto);

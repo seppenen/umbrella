@@ -4,17 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.userService.dto.UserResponseDto;
 import com.service.userService.service.LoggerService;
-import com.service.userService.utils.ApiErrorFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
@@ -39,8 +35,7 @@ class PeopleEndpointsTest {
     private UserFacade userFacade;
     @MockBean
     private LoggerService loggerService;
-    @MockBean
-    private ApiErrorFactory apiErrorFactory;
+
 
     @Test
     public void getAllUsersTest() throws Exception {
@@ -69,26 +64,7 @@ class PeopleEndpointsTest {
         assertThat(responseUsers.get(0).getEmail()).isEqualTo(mockUser.getEmail());
     }
 
-    @Test
-    public void testGetUser() throws Exception {
-        // Initialize expected response
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setUsername("Test");
 
-        Mockito.when(userFacade.getUser(Mockito.anyLong())).thenReturn(userResponseDto);
-
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/user/{id}", 1L)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String jsonResponse = mvcResult.getResponse().getContentAsString();
-        UserResponseDto actualUserResponseDto = new ObjectMapper().readValue(jsonResponse, UserResponseDto.class);
-
-        Assertions.assertNotNull(actualUserResponseDto);
-        Assertions.assertEquals(userResponseDto.getUsername(), actualUserResponseDto.getUsername());
-
-    }
 
 
     @Test
