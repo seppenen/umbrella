@@ -11,14 +11,15 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthServiceClient extends BaseClient {
 
-    private final WebClient userServiceWebClient;
 
-    public AuthServiceClient(WebClient userServiceWebClient) {
-        this.userServiceWebClient = userServiceWebClient;
+    private final WebClient authServiceWebClient;
+
+    public AuthServiceClient( WebClient authServiceWebClient) {
+        this.authServiceWebClient = authServiceWebClient;
     }
 
     public Mono<Boolean> authorize(String token) {
-        return buildAuthServerWebClient(userServiceWebClient, token)
+        return buildAuthServerWebClient(authServiceWebClient, token)
                 .post()
                 .uri("/authorize")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
@@ -28,4 +29,6 @@ public class AuthServiceClient extends BaseClient {
     private Mono<Boolean> isResponseStatus2xxSuccessful(ClientResponse response) {
         return Mono.just(response.statusCode().is2xxSuccessful());
     }
+
+
 }

@@ -31,24 +31,27 @@ public class AuthorizationFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String path = exchange.getRequest().getURI().getPath();
-        boolean isIgnoredPath = Arrays.stream(ALLOWED_PATHS).anyMatch(path::contains);
-
-        if (!isIgnoredPath) {
-            String token = extractToken(exchange)
-                    .orElseThrow(() -> new RuntimeException("Missing authorization header"));
-
-            return validateAndHandleErrors(token).then(chain.filter(exchange));
+        if (isAllowedPath(exchange) && tokenExists(exchange)) {
+            return validateAndHandleErrors(extractToken(exchange), chain, exchange);
         }
-
         return chain.filter(exchange);
     }
 
-    private Mono<Void> validateAndHandleErrors(String token) {
-        return authServiceClient.authorize(token)
+    private boolean isAllowedPath(ServerWebExchange exchange) {
+        String path = exchange.getRequest().getURI().getPath();
+        return Arrays.stream(ALLOWED_PATHS).noneMatch(path::contains);
+    }
+
+    private boolean tokenExists(ServerWebExchange exchange) {
+        return extractToken(exchange).isPresent();
+    }
+
+    private Mono<Void> validateAndHandleErrors(Optional<String> token, GatewayFilterChain chain, ServerWebExchange exchange) {
+        return token.map(t -> authServiceClient.authorize(t)
                 .filter(Boolean::booleanValue)
                 .switchIfEmpty(Mono.error(new AuthenticationException("Unauthorized")))
-                .then();
+                .then(chain.filter(exchange))
+        ).orElse(Mono.error(new AuthenticationException("Unauthorized")));
     }
 
     private Optional<String> extractToken(ServerWebExchange exchange) {

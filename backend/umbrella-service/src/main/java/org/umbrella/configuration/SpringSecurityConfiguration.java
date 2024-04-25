@@ -39,7 +39,7 @@ public class SpringSecurityConfiguration {
                         .requestMatchers("/**")
                         .permitAll()
                 )
-                .addFilterAfter(authServiceFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authServiceFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler((request, response, accessDeniedException) ->

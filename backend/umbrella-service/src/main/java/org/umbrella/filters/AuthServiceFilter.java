@@ -48,6 +48,6 @@ public class AuthServiceFilter extends OncePerRequestFilter {
                 .filter(valid -> valid)
                 .switchIfEmpty(Mono.error(new SignatureInvalidException("Unauthorized")))
                 .publishOn(Schedulers.boundedElastic())
-                .block();
+                .then();
     }
 }
