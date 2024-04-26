@@ -1,7 +1,6 @@
 package org.umbrella.apigateway.client;
 
 
-import org.apache.http.auth.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,12 +17,15 @@ public class AuthServiceClient extends BaseClient {
         this.authServiceWebClient = authServiceWebClient;
     }
 
+
     public Mono<Boolean> authorize(String token) {
         return buildAuthServerWebClient(authServiceWebClient, token)
                 .post()
                 .uri("/authorize")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
-                .onErrorResume(e -> Mono.error(new AuthenticationException(e.getMessage(), e)));
+                .onErrorResume(e -> {
+                    return Mono.error(new RuntimeException("Error while authorizing token", e));
+                });
     }
 
     private Mono<Boolean> isResponseStatus2xxSuccessful(ClientResponse response) {

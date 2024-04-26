@@ -53,7 +53,7 @@ public class AuthorizationFilter implements GlobalFilter {
     private Mono<Void> validateAndHandleErrors(String token, GatewayFilterChain chain, ServerWebExchange exchange) {
         return authServiceClient.authorize(token)
                 .filter(Boolean::booleanValue)
-                .switchIfEmpty(Mono.error(new AuthenticationException("Unauthorized")))
+                .switchIfEmpty(Mono.error(new AuthenticationException("Invalid token")))
                 .then(chain.filter(exchange));
     }
 

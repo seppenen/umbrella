@@ -12,8 +12,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.umbrella.apigateway.exceptions.TokenNotFoundException;
 import org.umbrella.apigateway.service.LoggerService;
 
-import java.util.Objects;
-
 @RestControllerAdvice
 public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
     private final LoggerService loggerService;
@@ -34,14 +32,22 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
     }
 
     private ResponseStatusException processException(ServerWebExchange exchange, Exception ex) {
-        ServerHttpResponse response = setResponseUnauthorized(exchange);
-        loggerService.logError(ex, Objects.requireNonNull(response.getStatusCode()));
-        return new ResponseStatusException(response.getStatusCode(), ex.getMessage() );
+        ServerHttpResponse response = setResponseStatusCode(exchange,ex);
+
+        loggerService.logError(ex, response.getStatusCode());
+        return new ResponseStatusException(response.getStatusCode(), ex.getMessage());
     }
 
-    private ServerHttpResponse setResponseUnauthorized(ServerWebExchange exchange) {
+    private ServerHttpResponse setResponseStatusCode(ServerWebExchange exchange, Exception ex) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        if(ex instanceof TokenNotFoundException || ex instanceof AuthenticationException) {
+            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        }  else if(ex instanceof RuntimeException) {
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            // default status code
+            response.setStatusCode(HttpStatus.BAD_REQUEST);
+        }
         return response;
     }
 }
