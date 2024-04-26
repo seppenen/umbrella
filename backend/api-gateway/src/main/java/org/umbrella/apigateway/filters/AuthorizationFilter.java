@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.umbrella.apigateway.client.AuthServiceClient;
+import org.umbrella.apigateway.exceptions.TokenNotFoundException;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
@@ -31,8 +32,13 @@ public class AuthorizationFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if (isAllowedPath(exchange) && tokenExists(exchange)) {
-            return validateAndHandleErrors(extractToken(exchange), chain, exchange);
+        if (isAllowedPath(exchange)) {
+            Optional<String> token = extractToken(exchange);
+            if (token.isPresent()) {
+                return validateAndHandleErrors(token.get(), chain, exchange);
+            } else {
+                throw new TokenNotFoundException("Token not found");
+            }
         }
         return chain.filter(exchange);
     }
@@ -42,16 +48,13 @@ public class AuthorizationFilter implements GlobalFilter {
         return Arrays.stream(ALLOWED_PATHS).noneMatch(path::contains);
     }
 
-    private boolean tokenExists(ServerWebExchange exchange) {
-        return extractToken(exchange).isPresent();
-    }
 
-    private Mono<Void> validateAndHandleErrors(Optional<String> token, GatewayFilterChain chain, ServerWebExchange exchange) {
-        return token.map(t -> authServiceClient.authorize(t)
+
+    private Mono<Void> validateAndHandleErrors(String token, GatewayFilterChain chain, ServerWebExchange exchange) {
+        return authServiceClient.authorize(token)
                 .filter(Boolean::booleanValue)
                 .switchIfEmpty(Mono.error(new AuthenticationException("Unauthorized")))
-                .then(chain.filter(exchange))
-        ).orElse(Mono.error(new AuthenticationException("Unauthorized")));
+                .then(chain.filter(exchange));
     }
 
     private Optional<String> extractToken(ServerWebExchange exchange) {

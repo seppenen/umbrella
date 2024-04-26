@@ -23,7 +23,7 @@ public class AuthServiceClient extends BaseClient {
                 .post()
                 .uri("/authorize")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
-                .onErrorResume(e -> Mono.error(new AuthenticationException("Error validating token", e)));
+                .onErrorResume(e -> Mono.error(new AuthenticationException(e.getMessage(), e)));
     }
 
     private Mono<Boolean> isResponseStatus2xxSuccessful(ClientResponse response) {
