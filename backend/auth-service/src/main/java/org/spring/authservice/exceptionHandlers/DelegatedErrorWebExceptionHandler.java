@@ -1,10 +1,8 @@
 package org.spring.authservice.exceptionHandlers;
 
 import io.jsonwebtoken.JwtException;
-import org.spring.authservice.utils.ApiResponseErrorFactory;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -24,10 +22,9 @@ public class DelegatedErrorWebExceptionHandler implements ErrorWebExceptionHandl
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         if (ex instanceof JwtException) {
-            ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            return new ApiResponseErrorFactory().createErrorResponse(exchange.getResponse(), ex.getMessage());
-        }
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                return exchange.getResponse().setComplete();
+            }
         return Mono.error(ex);
     }
 }

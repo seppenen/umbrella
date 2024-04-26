@@ -3,10 +3,9 @@ package org.spring.authservice.client;
 
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.dto.UserEntityDto;
-import org.spring.authservice.entity.ApiErrorResponse;
-import org.spring.authservice.exceptions.HttpRequestException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 
@@ -25,8 +24,7 @@ public class UserServiceClient extends BaseClientResolver {
                 .bodyValue(userCredentialDto)
                 .retrieve()
                 .onStatus(this::isClientOrServerError, clientResponse ->
-                      clientResponse.bodyToMono(ApiErrorResponse.class)
-                              .flatMap(errorResponse -> Mono.error(new HttpRequestException(errorResponse.getErrorCode(), errorResponse.getMessage()))))
+                       Mono.error(new ResponseStatusException(clientResponse.statusCode(), "Unable to authenticate user")))
                 .bodyToMono(UserEntityDto.class);
     }
 }

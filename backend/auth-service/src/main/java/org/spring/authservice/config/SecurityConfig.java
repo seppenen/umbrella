@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new DelegatedServerAuthenticationEntryPoint())
                 );
 
+
         return http.build();
     }
 
