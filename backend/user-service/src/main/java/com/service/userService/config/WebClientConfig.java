@@ -1,7 +1,6 @@
 package com.service.userService.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,7 +14,6 @@ public class WebClientConfig {
 
     private static final String PREFIX = "/api/v1";
 
-    @LoadBalanced
     @Bean
     public WebClient authServiceWebClient() {
         return WebClient.builder()

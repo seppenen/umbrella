@@ -1,7 +1,8 @@
 package com.service.userService.client;
 
 
-import org.apache.http.auth.AuthenticationException;
+
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -23,7 +24,8 @@ public class AuthServiceClient extends BaseClient {
                 .post()
                 .uri("/authorize")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
-                .onErrorResume(e -> Mono.error(new AuthenticationException("Error validating token", e)));
+                .onErrorResume(e -> Mono.error(new AuthenticationException("Error validating token", e) {
+                }));
     }
 
 }

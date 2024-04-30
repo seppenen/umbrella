@@ -17,6 +17,6 @@ import reactor.core.publisher.Mono;
 public class DelegatedServerAuthenticationEntryPoint implements ServerAuthenticationEntryPoint  {
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
-        return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+        return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", ex));
     }
 }

@@ -1,14 +1,15 @@
 package org.umbrella.apigateway.client;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 
 @Component
-public class AuthServiceClient extends BaseClient {
+public class AuthServiceClient extends BaseClientResolver {
 
 
     private final WebClient authServiceWebClient;
@@ -23,12 +24,7 @@ public class AuthServiceClient extends BaseClient {
                 .post()
                 .uri("/authorize")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
-                .onErrorResume(e -> Mono.error(new RuntimeException("Error while authorizing token", e)));
+                .onErrorResume(e -> Mono.error(new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage())));
     }
-
-    private Mono<Boolean> isResponseStatus2xxSuccessful(ClientResponse response) {
-        return Mono.just(response.statusCode().is2xxSuccessful());
-    }
-
 
 }

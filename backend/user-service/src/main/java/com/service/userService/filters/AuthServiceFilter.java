@@ -2,10 +2,10 @@ package com.service.userService.filters;
 
 import com.service.userService.client.AuthServiceClient;
 import jakarta.validation.constraints.NotNull;
-import org.apache.http.auth.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -65,7 +65,7 @@ public class AuthServiceFilter implements WebFilter {
     private Mono<Void> validateAndSetSecurityContext(String token,  WebFilterChain chain, ServerWebExchange exchange) {
         return authServiceClient.authorize(token)
                 .filter(Boolean::booleanValue)
-                .switchIfEmpty(Mono.error(new AuthenticationException("Unauthorized4")))
+                .switchIfEmpty(Mono.error(new AuthenticationException("Unauthorized request") {}))
                 .flatMap(isAuthorized -> {
                     Authentication auth = new UsernamePasswordAuthenticationToken(token, token, new ArrayList<>());
                     return chain.filter(exchange)

@@ -38,32 +38,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
     networks:
       - backend-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://api-gateway:8080/api-gateway/api/v1/health"]
+      test: ["CMD", "curl", "-f", "http://api-gateway:8080/api/v1/health"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
-
-
-  eureka:
-    container_name: eureka
-    build: backend/eureka
-    image: ${EUREKA_SERVER_NAME:-eureka}
-    ports:
-      - "8761:8761"
-    networks:
-      - backend-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-      interval: 20s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
 
   umbrella-service:
     container_name: umbrella-service
@@ -78,14 +60,12 @@ services:
     depends_on:
       postgres:
           condition: service_healthy
-      eureka:
-        condition: service_healthy
       api-gateway:
         condition: service_healthy
     networks:
       - backend-network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://umbrella-service/umbrella-service/api/v1/health" ]
+      test: [ "CMD", "curl", "-f", "http://umbrella-service:8080/api/v1/health" ]
       interval: 20s
       timeout: 5s
       retries: 5
@@ -104,14 +84,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
       api-gateway:
         condition: service_healthy
     networks:
       - backend-network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://user-service/user-service/api/v1/health" ]
+      test: [ "CMD", "curl", "-f", "http://user-service:8080/api/v1/health" ]
       interval: 20s
       timeout: 5s
       retries: 5
@@ -130,14 +108,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
       api-gateway:
         condition: service_healthy
     networks:
       - backend-network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://auth-service/auth-service/api/v1/health" ]
+      test: [ "CMD", "curl", "-f", "http://auth-service:8080/api/v1/health" ]
       interval: 20s
       timeout: 5s
       retries: 5

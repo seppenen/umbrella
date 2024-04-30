@@ -2,7 +2,6 @@ version: '3'
 vars:
   HOME_DIR: '${HOME}'
   INIT_DATA_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/data'
-  EUREKA_SERVER_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/eureka'
   UMBRELLA_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/umbrella-service'
   AUTH_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/auth-service'
   USER_SERVICE_DIR: '{{.HOME}}/Development/Java/umbrella/microservices/backend/user-service'
@@ -78,8 +77,6 @@ tasks:
     silent: true
     cmds:
       - task: clean-docker
-      - task: build
-        vars: {BUILD_DIR: '{{.EUREKA_SERVER_DIR}}'}
       - task: build
         vars: { BUILD_DIR: '{{.UMBRELLA_SERVICE_DIR}}' }
       - task: build

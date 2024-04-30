@@ -1,15 +1,13 @@
 package org.umbrella.apigateway.advicers;
 
-
-import org.apache.http.auth.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
-import org.umbrella.apigateway.exceptions.TokenNotFoundException;
 import org.umbrella.apigateway.service.LoggerService;
 
 @RestControllerAdvice
@@ -24,8 +22,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             RuntimeException.class,
-            AuthenticationException.class,
-            TokenNotFoundException.class
+            AuthenticationException.class
     })
     public ResponseStatusException handleException(ServerWebExchange exchange, Exception ex) {
         return processException(exchange, ex);
@@ -40,7 +37,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
 
     private ServerHttpResponse setResponseStatusCode(ServerWebExchange exchange, Exception ex) {
         ServerHttpResponse response = exchange.getResponse();
-        if(ex instanceof TokenNotFoundException || ex instanceof AuthenticationException) {
+        if( ex instanceof AuthenticationException) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
         }  else if(ex instanceof RuntimeException) {
             response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);

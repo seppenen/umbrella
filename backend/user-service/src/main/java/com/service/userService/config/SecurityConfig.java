@@ -18,11 +18,11 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @EnableWebFluxSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     private final AuthServiceFilter authServiceFilter;
 
-    public SecurityConfiguration(AuthServiceFilter authServiceFilter) {
+    public SecurityConfig(AuthServiceFilter authServiceFilter) {
         this.authServiceFilter = authServiceFilter;
     }
 
@@ -43,10 +43,12 @@ public class SecurityConfiguration {
                         .permitAll())
                 .authorizeExchange(exchanges -> exchanges
                         .anyExchange().authenticated())
-                .addFilterBefore(authServiceFilter, SecurityWebFiltersOrder.AUTHORIZATION)
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new DelegatedServerAuthenticationEntryPoint())
-                );
+                .addFilterBefore(authServiceFilter, SecurityWebFiltersOrder.AUTHORIZATION);
+//                .exceptionHandling(ex -> ex
+//                        .authenticationEntryPoint(new DelegatedServerAuthenticationEntryPoint())
+//                );
+
+
         return http.build();
     }
     @Bean

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.userService.dto.UserRequestDto;
 import com.service.userService.dto.UserResponseDto;
 import com.service.userService.entity.UserEntity;
-import com.service.userService.exceptions.UserRegistrationFailedException;
+import com.service.userService.exceptions.EntityPersistenceException;
 import com.service.userService.repository.UserRepository;
 import com.service.userService.service.LoggerService;
 import com.service.userService.service.UserService;
@@ -130,6 +130,6 @@ public class UserServiceTest {
 
         Mockito.when(objectMapper.convertValue(userRequestDto, UserEntity.class)).thenThrow(IllegalStateException.class);
 
-        assertThrows(UserRegistrationFailedException.class, () -> userFacade.registerUser(userRequestDto));
+        assertThrows(EntityPersistenceException.class, () -> userFacade.registerUser(userRequestDto));
     }
 }

@@ -1,13 +1,14 @@
 package org.umbrella.apigateway.filters;
 
-import org.apache.http.auth.AuthenticationException;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.umbrella.apigateway.client.AuthServiceClient;
-import org.umbrella.apigateway.exceptions.TokenNotFoundException;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
@@ -37,7 +38,7 @@ public class AuthorizationFilter implements GlobalFilter {
             if (token.isPresent()) {
                 return validateAndHandleErrors(token.get(), chain, exchange);
             } else {
-                throw new TokenNotFoundException("Token not found");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, null);
             }
         }
         return chain.filter(exchange);
@@ -53,7 +54,7 @@ public class AuthorizationFilter implements GlobalFilter {
     private Mono<Void> validateAndHandleErrors(String token, GatewayFilterChain chain, ServerWebExchange exchange) {
         return authServiceClient.authorize(token)
                 .filter(Boolean::booleanValue)
-                .switchIfEmpty(Mono.error(new AuthenticationException("Not authorized")))
+                .switchIfEmpty(Mono.error(new AuthenticationException("Not authorized") {}))
                 .then(chain.filter(exchange));
     }
 

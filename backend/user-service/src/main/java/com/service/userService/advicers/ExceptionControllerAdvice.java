@@ -1,14 +1,16 @@
 package com.service.userService.advicers;
 
-import com.service.userService.exceptions.UserRegistrationFailedException;
+import com.service.userService.exceptions.EntityPersistenceException;
 import com.service.userService.service.LoggerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -18,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @ControllerAdvice
 @AllArgsConstructor
-public class ExceptionControllerAdvice {
+public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler  {
 
     private final LoggerService loggerService;
 
@@ -28,13 +30,18 @@ public class ExceptionControllerAdvice {
         loggerService.logError(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseStatusException handleAuthenticationException(AuthenticationException ex) {
+        return useApiErrorResponse(ex, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseStatusException handleNotReadableException(HttpMessageNotReadableException ex) {
         return useApiErrorResponse(ex, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserRegistrationFailedException.class)
-    public ResponseStatusException handleRegistrationFailedException(UserRegistrationFailedException ex) {
+    @ExceptionHandler(EntityPersistenceException.class)
+    public ResponseStatusException handleRegistrationFailedException(EntityPersistenceException ex) {
         return useApiErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -51,7 +58,7 @@ public class ExceptionControllerAdvice {
 
     private ResponseStatusException useApiErrorResponse(Throwable ex, HttpStatus status) {
         loggerService.logError(ex, status);
-        return new ResponseStatusException(status, status.getReasonPhrase());
+        return new ResponseStatusException(status, status.getReasonPhrase(), ex);
     }
 
 

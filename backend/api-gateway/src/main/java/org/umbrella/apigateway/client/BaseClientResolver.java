@@ -1,9 +1,11 @@
 package org.umbrella.apigateway.client;
 
 
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-public abstract class BaseClient {
+public abstract class BaseClientResolver {
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
     protected static final String X_REQUEST_HEADER = "X-Request";
@@ -15,5 +17,9 @@ public abstract class BaseClient {
                 .defaultHeader(AUTHORIZATION_HEADER, "Bearer " + token)
                 .defaultHeader(X_REQUEST_HEADER, HEADER_VALUE)
                 .build();
+    }
+
+    protected Mono<Boolean> isResponseStatus2xxSuccessful(ClientResponse clientResponse) {
+        return Mono.just(clientResponse.statusCode().is2xxSuccessful());
     }
 }
