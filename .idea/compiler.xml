@@ -11,7 +11,6 @@
         <module name="auth-service" />
         <module name="user-service" />
         <module name="umbrella-service" />
-        <module name="eureka" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
@@ -21,6 +20,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="eureka" target="17" />
       <module name="income-module.main" target="17" />
       <module name="income-module.test" target="17" />
       <module name="outcome-service" target="17" />
