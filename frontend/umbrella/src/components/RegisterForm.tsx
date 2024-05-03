@@ -11,7 +11,7 @@ export function RegisterForm({ setFormType }:RegisterFormProps) {
                 <img
                     className="mx-auto h-10 w-auto"
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                    alt="Your Company"
+
                 />
                 <h2 className="mt-10 text-center text-lg font-bold leading-9 tracking-tight text-gray-900">
                     Create your account
@@ -51,7 +51,7 @@ export function RegisterForm({ setFormType }:RegisterFormProps) {
                     </div>
                     <div className="space-y-1">
                         <label htmlFor="repeat-password" className="block text-sm font-medium leading-6 text-gray-900">
-                            Repeat Password
+                            Repeat password
                         </label>
                         <div className="mt-2">
                             <input
