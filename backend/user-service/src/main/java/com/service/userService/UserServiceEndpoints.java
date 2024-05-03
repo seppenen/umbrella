@@ -11,7 +11,6 @@ import com.service.userService.dto.UserLoginDto;
 import com.service.userService.dto.UserLoginResponseDto;
 import com.service.userService.dto.UserRequestDto;
 import com.service.userService.dto.UserResponseDto;
-import com.service.userService.service.UserServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,7 +32,7 @@ import java.util.Map;
 public class UserServiceEndpoints {
     private final UserFacade userFacade;
 
-    public UserServiceEndpoints(UserServiceInterface userService, UserFacade userFacade) {
+    public UserServiceEndpoints( UserFacade userFacade) {
 
         this.userFacade = userFacade;
     }
