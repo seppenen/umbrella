@@ -1,10 +1,12 @@
-package org.spring.authservice.service;
+package org.spring.authservice.service.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.spring.authservice.service.IJwtService;
+import org.spring.authservice.service.ILoggerService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -20,16 +22,22 @@ import java.util.function.Function;
 
 
 @Service
-public class JwtService {
+public class JwtService implements IJwtService {
 
+    private final ILoggerService loggerService;
     private static final String SECRET = "357638792F423F4428472B4B6250655368566D597133743677397A2443264629";
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 240;
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 15;
+
+    public JwtService(ILoggerService loggerService) {
+        this.loggerService = loggerService;
+    }
 
     public String generateRefreshToken() {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, REFRESH_TOKEN_EXPIRE_TIME);
     }
+
 
     public String generateAccessToken() {
         Map<String, Object> claims = new HashMap<>();
@@ -92,6 +100,7 @@ public class JwtService {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
+        loggerService.getInfoBuilder().withMessage("Token not found in request").log();
         return null;
     }
 }

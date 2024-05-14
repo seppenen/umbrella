@@ -1,7 +1,7 @@
 package org.spring.authservice.filters;
 
 import org.jetbrains.annotations.NotNull;
-import org.spring.authservice.service.JwtService;
+import org.spring.authservice.service.IJwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 @Component
 public class JwtAuthenticationFilter implements WebFilter {
-    private final JwtService jwtService;
+    private final IJwtService jwtService;
 
     private static final String[] ALLOWED_PATHS = {
             "/api/v1/health",
@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter implements WebFilter {
             "/swagger-ui",
             "/v3/api-docs"
     };
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(IJwtService jwtService) {
         this.jwtService = jwtService;
     }
 

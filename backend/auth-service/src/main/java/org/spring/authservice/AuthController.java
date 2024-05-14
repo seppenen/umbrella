@@ -2,7 +2,7 @@ package org.spring.authservice;
 
 import org.spring.authservice.dto.RefreshTokenResponseDto;
 import org.spring.authservice.dto.UserCredentialDto;
-import org.spring.authservice.service.JwtService;
+import org.spring.authservice.service.impl.JwtService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
