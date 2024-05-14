@@ -7,6 +7,7 @@ import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.repository.TokenRepository;
 import org.spring.authservice.service.IAuthService;
 import org.spring.authservice.service.ILoggerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -33,19 +34,20 @@ public class AuthService implements IAuthService {
     public void persistToken(TokenStateEntity tokenStateEntity) {
         TokenStateEntity persistedTokenStateEntity = tokenRepository.save(tokenStateEntity);
         deleteAllButLatestToken(persistedTokenStateEntity);
-        loggerService.getInfoBuilder()
-                .withMessage("Token persisted")
-                .log();
-
-    }
+        logTokenAction("Token persisted", persistedTokenStateEntity.getEmail());    }
 
     public void deleteAllButLatestToken(TokenStateEntity persistedTokenStateEntity) {
         String email = persistedTokenStateEntity.getEmail();
         Long id = persistedTokenStateEntity.getId();
         tokenRepository.deleteAll(tokenRepository.findByEmailAndIdNot(email, id));
+        logTokenAction("Previous token deleted", email);
+    }
+
+    public void logTokenAction(String message, String data) {
         loggerService.getInfoBuilder()
-                .withMessage("Previous token deleted")
-                .withData(email)
+                .withMessage(message)
+                .withData(data)
+                .withStatusCode(HttpStatus.OK)
                 .log();
     }
 
