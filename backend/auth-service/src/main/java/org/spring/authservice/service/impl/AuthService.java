@@ -32,8 +32,8 @@ public class AuthService implements IAuthService {
     public void saveToken(String token, String email) {
         TokenState tokenState = new TokenState(null, token, true, email);
         TokenState persistedTokenState = tokenRepository.save(tokenState);
-        deleteExistingTokensByEmail(persistedTokenState);
         loggerService.getInfoBuilder().withMessage("Token saved").withData(token).log();
+        deleteExistingTokensByEmail(persistedTokenState);
     }
 
     public void deleteExistingTokensByEmail(TokenState persistedTokenState) {
