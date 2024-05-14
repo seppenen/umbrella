@@ -16,7 +16,7 @@ import lombok.Setter;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
-public class TokenState {
+public class TokenStateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,4 +24,8 @@ public class TokenState {
     private boolean valid;
     private String email;
 
+    public TokenStateEntity(String email, String refreshToken) {
+        this.email = email;
+        this.token = refreshToken;
+    }
 }

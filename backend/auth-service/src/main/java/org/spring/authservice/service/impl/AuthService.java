@@ -3,7 +3,7 @@ package org.spring.authservice.service.impl;
 import org.spring.authservice.client.UserServiceClient;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.dto.UserEntityDto;
-import org.spring.authservice.entity.TokenState;
+import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.repository.TokenRepository;
 import org.spring.authservice.service.IAuthService;
 import org.spring.authservice.service.ILoggerService;
@@ -30,22 +30,18 @@ public class AuthService implements IAuthService {
 
 
     @Transactional
-    public void persistToken(String token, String email) {
-        TokenState tokenState = new TokenState();
-        tokenState.setToken(token);
-        tokenState.setEmail(email);
-        TokenState persistedTokenState = tokenRepository.save(tokenState);
-        deleteAllButLatestToken(persistedTokenState);
+    public void persistToken(TokenStateEntity tokenStateEntity) {
+        TokenStateEntity persistedTokenStateEntity = tokenRepository.save(tokenStateEntity);
+        deleteAllButLatestToken(persistedTokenStateEntity);
         loggerService.getInfoBuilder()
                 .withMessage("Token persisted")
-                .withData(token)
                 .log();
 
     }
 
-    public void deleteAllButLatestToken(TokenState persistedTokenState) {
-        String email = persistedTokenState.getEmail();
-        Long id = persistedTokenState.getId();
+    public void deleteAllButLatestToken(TokenStateEntity persistedTokenStateEntity) {
+        String email = persistedTokenStateEntity.getEmail();
+        Long id = persistedTokenStateEntity.getId();
         tokenRepository.deleteAll(tokenRepository.findByEmailAndIdNot(email, id));
         loggerService.getInfoBuilder()
                 .withMessage("Previous token deleted")

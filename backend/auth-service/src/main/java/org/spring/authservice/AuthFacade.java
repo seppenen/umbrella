@@ -2,6 +2,7 @@ package org.spring.authservice;
 
 import org.spring.authservice.dto.RefreshTokenResponseDto;
 import org.spring.authservice.dto.UserCredentialDto;
+import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.service.IAuthService;
 import org.spring.authservice.service.IJwtService;
 import org.springframework.stereotype.Component;
@@ -18,14 +19,14 @@ public class AuthFacade {
     }
 
     public Mono<RefreshTokenResponseDto> generateTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
-        //TODO:Implement token state
         return authService.requestAuthenticatedUser(userCredentialDto)
                 .flatMap(userEntityDto -> {
                     String refreshToken = jwtService.generateRefreshToken();
-                    authService.persistToken(refreshToken, userEntityDto.getEmail());
-                    RefreshTokenResponseDto refreshTokenResponseDto = new RefreshTokenResponseDto();
-                    refreshTokenResponseDto.setRefreshToken(refreshToken);
-                    return Mono.just(refreshTokenResponseDto);
+                    TokenStateEntity tokenStateEntity = new TokenStateEntity(userEntityDto.getEmail(), refreshToken);
+                    authService.persistToken(tokenStateEntity);
+                    return Mono.just(new RefreshTokenResponseDto(refreshToken));
                 });
     }
+
+
 }
