@@ -28,17 +28,17 @@ public class JwtService implements IJwtService {
         this.loggerService = loggerService;
     }
 
-    private String generateToken(long expirationTimeMs) {
+    private String generateToken() {
         return Jwts.builder()
                 .setIssuer("auth-service")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String generateRefreshToken() {
-        return generateToken(REFRESH_TOKEN_EXPIRE_TIME);
+        return generateToken();
     }
 
     public String generateAccessToken() {
@@ -73,10 +73,14 @@ public class JwtService implements IJwtService {
         loggerService.getInfoBuilder()
                 .withMessage("Token not found in request")
                 .log();
-        return null;
+          return null;
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
