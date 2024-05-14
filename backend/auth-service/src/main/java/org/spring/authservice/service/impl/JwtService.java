@@ -7,92 +7,62 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.spring.authservice.service.IJwtService;
 import org.spring.authservice.service.ILoggerService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.security.Key;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
-
 @Service
 public class JwtService implements IJwtService {
-
-    private final ILoggerService loggerService;
-    private static final String SECRET = "357638792F423F4428472B4B6250655368566D597133743677397A2443264629";
+    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(
+            "357638792F423F4428472B4B6250655368566D597133743677397A2443264629"));
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 240;
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 15;
+    private final ILoggerService loggerService;
 
     public JwtService(ILoggerService loggerService) {
         this.loggerService = loggerService;
     }
 
-    public String generateRefreshToken() {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, REFRESH_TOKEN_EXPIRE_TIME);
+    private String generateToken(long expirationTimeMs) {
+        return Jwts.builder()
+                .setIssuer("auth-service")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .compact();
     }
 
+    public String generateRefreshToken() {
+        return generateToken(REFRESH_TOKEN_EXPIRE_TIME);
+    }
 
     public String generateAccessToken() {
-        Map<String, Object> claims = new HashMap<>();
+        var claims = new HashMap<String, Object>();
         claims.put("jti", UUID.randomUUID().toString());
-        return createToken(claims, ACCESS_TOKEN_EXPIRE_TIME);
-    }
-
-    private String createToken(Map<String, Object> claims, long expirationTime) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuer("auth-service")
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .compact();
     }
 
-
-    public Boolean validateToken(String token) {
-        return (!isTokenExpired(token) && isSignatureValid(token));
-    }
-
-    private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        return claimsResolver.apply(extractAllClaims(token));
     }
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    public Boolean isSignatureValid(String token) {
-        extractAllClaims(token);
-        return true;
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public Authentication getAuthentication(String token) {
-        return new PreAuthenticatedAuthenticationToken(token, null, new ArrayList<>());
-    }
-
-    private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
-        return Keys.hmacShaKeyFor(keyBytes);
+    public Boolean validateToken(String token) {
+        return !extractExpiration(token).before(new Date());
     }
 
     public String extractToken(ServerWebExchange exchange) {
@@ -100,7 +70,13 @@ public class JwtService implements IJwtService {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        loggerService.getInfoBuilder().withMessage("Token not found in request").log();
+        loggerService.getInfoBuilder()
+                .withMessage("Token not found in request")
+                .log();
         return null;
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
     }
 }

@@ -22,7 +22,7 @@ public class AuthFacade {
         return authService.requestAuthenticatedUser(userCredentialDto)
                 .flatMap(userEntityDto -> {
                     String refreshToken = jwtService.generateRefreshToken();
-                    authService.saveToken(refreshToken, userEntityDto.getEmail());
+                    authService.persistToken(refreshToken, userEntityDto.getEmail());
                     RefreshTokenResponseDto refreshTokenResponseDto = new RefreshTokenResponseDto();
                     refreshTokenResponseDto.setRefreshToken(refreshToken);
                     return Mono.just(refreshTokenResponseDto);

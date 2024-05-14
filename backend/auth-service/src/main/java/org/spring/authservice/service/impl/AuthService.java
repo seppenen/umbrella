@@ -30,20 +30,27 @@ public class AuthService implements IAuthService {
 
 
     @Transactional
-    public void saveToken(String token, String email) {
+    public void persistToken(String token, String email) {
         TokenState tokenState = new TokenState();
         tokenState.setToken(token);
         tokenState.setEmail(email);
         TokenState persistedTokenState = tokenRepository.save(tokenState);
-        loggerService.getInfoBuilder().withMessage("Token saved").withData(token).log();
-        deleteExistingTokensByEmail(persistedTokenState);
+        deleteAllButLatestToken(persistedTokenState);
+        loggerService.getInfoBuilder()
+                .withMessage("Token persisted")
+                .withData(token)
+                .log();
+
     }
 
-    public void deleteExistingTokensByEmail(TokenState persistedTokenState) {
+    public void deleteAllButLatestToken(TokenState persistedTokenState) {
         String email = persistedTokenState.getEmail();
         Long id = persistedTokenState.getId();
         tokenRepository.deleteAll(tokenRepository.findByEmailAndIdNot(email, id));
-        loggerService.getInfoBuilder().withMessage("Previous token deleted").withData(email).log();
+        loggerService.getInfoBuilder()
+                .withMessage("Previous token deleted")
+                .withData(email)
+                .log();
     }
 
 }
