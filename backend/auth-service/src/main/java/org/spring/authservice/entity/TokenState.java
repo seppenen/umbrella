@@ -24,6 +24,6 @@ public class TokenState {
     private Long id;
     private String token;
     private boolean valid;
-    private String username;
+    private String email;
 
 }

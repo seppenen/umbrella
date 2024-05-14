@@ -10,12 +10,10 @@ import org.springframework.stereotype.Service;
 public class LoggerService implements ILoggerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerService.class);
 
-    @Override
     public LogErrorBuilder getErrorBuilder() {
         return new LogErrorBuilder();
     }
 
-    @Override
     public LogInfoBuilder getInfoBuilder() {
         return new LogInfoBuilder();
     }

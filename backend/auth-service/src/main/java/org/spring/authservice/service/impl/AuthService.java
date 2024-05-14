@@ -8,6 +8,7 @@ import org.spring.authservice.repository.TokenRepository;
 import org.spring.authservice.service.IAuthService;
 import org.spring.authservice.service.ILoggerService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -27,9 +28,19 @@ public class AuthService implements IAuthService {
         return userServiceClient.requestUserAuthentication(userCredentialDto);
     }
 
-    public void saveToken(String token, String username) {
-        tokenRepository.save(new TokenState(null, token, true, username));
+    @Transactional
+    public void saveToken(String token, String email) {
+        TokenState tokenState = new TokenState(null, token, true, email);
+        TokenState persistedTokenState = tokenRepository.save(tokenState);
+        deleteExistingTokensByEmail(persistedTokenState);
         loggerService.getInfoBuilder().withMessage("Token saved").withData(token).log();
+    }
+
+    public void deleteExistingTokensByEmail(TokenState persistedTokenState) {
+        String email = persistedTokenState.getEmail();
+        Long id = persistedTokenState.getId();
+        tokenRepository.deleteAll(tokenRepository.findByEmailAndIdNot(email, id));
+        loggerService.getInfoBuilder().withMessage("Token deleted").withData(email).log();
     }
 
 }
