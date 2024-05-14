@@ -34,7 +34,8 @@ public class AuthService implements IAuthService {
     public void persistToken(TokenStateEntity tokenStateEntity) {
         TokenStateEntity persistedTokenStateEntity = tokenRepository.save(tokenStateEntity);
         deleteAllButLatestToken(persistedTokenStateEntity);
-        logTokenAction("Token persisted", persistedTokenStateEntity.getEmail());    }
+        logTokenAction("Token persisted", persistedTokenStateEntity.getEmail());
+    }
 
     public void deleteAllButLatestToken(TokenStateEntity persistedTokenStateEntity) {
         String email = persistedTokenStateEntity.getEmail();
