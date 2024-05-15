@@ -13,19 +13,19 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "token_state")
 public class TokenStateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String token;
-    private boolean valid;
     private String email;
+    private boolean valid;
 
-    public TokenStateEntity(String email, String refreshToken) {
+    public TokenStateEntity(String email, String token) {
         this.email = email;
-        this.token = refreshToken;
+        this.token = token;
     }
 }

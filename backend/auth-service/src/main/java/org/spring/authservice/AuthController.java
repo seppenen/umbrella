@@ -39,7 +39,7 @@ public class AuthController {
     //TODO:This method creates a new refresh token
     @PostMapping("/authenticate")
     public Mono<RefreshTokenResponseDto> authenticate(@RequestBody UserCredentialDto userRequestDto) {
-        return authFacade.generateTokenIfAuthenticated(userRequestDto);
+        return authFacade.obtainTokenIfAuthenticated(userRequestDto);
     }
 
     @PostMapping("/access-token")
