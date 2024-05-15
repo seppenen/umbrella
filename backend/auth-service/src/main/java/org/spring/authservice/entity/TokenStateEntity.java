@@ -22,7 +22,6 @@ public class TokenStateEntity {
     private Long id;
     private String token;
     private String email;
-    private boolean valid;
 
     public TokenStateEntity(String email, String token) {
         this.email = email;
