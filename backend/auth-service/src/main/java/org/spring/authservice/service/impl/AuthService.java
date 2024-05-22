@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
+
 @Service
 public class AuthService implements IAuthService {
 
@@ -31,7 +33,7 @@ public class AuthService implements IAuthService {
 
 
     @Transactional
-    public void persistToken(TokenStateEntity tokenStateEntity) {
+    public void updateToken(TokenStateEntity tokenStateEntity) {
         TokenStateEntity persistedTokenStateEntity = tokenRepository.save(tokenStateEntity);
         deleteAllButLatestToken(persistedTokenStateEntity);
         logTokenAction("Token persisted", persistedTokenStateEntity.getEmail());
@@ -42,6 +44,10 @@ public class AuthService implements IAuthService {
         Long id = persistedTokenStateEntity.getId();
         tokenRepository.deleteAll(tokenRepository.findByEmailAndIdNot(email, id));
         logTokenAction("Previous token deleted", email);
+    }
+
+    public Optional<TokenStateEntity> findTokenByToken(String token) {
+        return tokenRepository.findByToken(token);
     }
 
     public void logTokenAction(String message, String data) {

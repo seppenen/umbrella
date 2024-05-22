@@ -1,6 +1,7 @@
 package org.spring.authservice.filters;
 
 import org.jetbrains.annotations.NotNull;
+import org.spring.authservice.service.IAuthService;
 import org.spring.authservice.service.IJwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 @Component
 public class JwtAuthenticationFilter implements WebFilter {
     private final IJwtService jwtService;
+    private final IAuthService authService;
 
     private static final String[] ALLOWED_PATHS = {
             "/api/v1/health",
@@ -24,22 +26,22 @@ public class JwtAuthenticationFilter implements WebFilter {
             "/swagger-ui",
             "/v3/api-docs"
     };
-    public JwtAuthenticationFilter(IJwtService jwtService) {
+    public JwtAuthenticationFilter(IJwtService jwtService, IAuthService authService) {
         this.jwtService = jwtService;
+        this.authService = authService;
     }
 
     @Override
     public @NotNull Mono<Void> filter(@NotNull ServerWebExchange exchange, WebFilterChain chain) {
-
         String path = exchange.getRequest().getURI().getPath();
         boolean isIgnoredPath = Arrays.stream(ALLOWED_PATHS).anyMatch(path::contains);
-
         if (isIgnoredPath) {
             return chain.filter(exchange);
         }
-
         String token = jwtService.extractToken(exchange);
-        if (token != null && jwtService.validateToken(token)) {
+        boolean isTokenPresent = authService.findTokenByToken(token).isPresent();
+        if (token != null && isTokenPresent) {
+            jwtService.validateToken(token);
             Authentication auth = new UsernamePasswordAuthenticationToken(token, token, new ArrayList<>());
             return chain.filter(exchange)
                     .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
