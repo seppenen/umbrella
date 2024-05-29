@@ -6,8 +6,8 @@ import com.service.userService.dto.UserResponseDto;
 import com.service.userService.entity.UserEntity;
 import com.service.userService.exceptions.EntityPersistenceException;
 import com.service.userService.repository.UserRepository;
-import com.service.userService.service.LoggerService;
-import com.service.userService.service.UserService;
+import com.service.userService.service.impl.LoggerServiceImpl;
+import com.service.userService.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test method for {@link UserService#getUser(Long)}.
+     * Test method for {@link UserServiceImpl#getUser(Long)}.
      *
      * This method tests the functionality of the getUser(Long) method by providing a valid user ID.
      * It verifies that the correct UserResponseDto is received from the UserService.
@@ -104,8 +104,8 @@ public class UserServiceTest {
         ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
         UserRepository userRepository = Mockito.mock(UserRepository.class);
-        LoggerService loggerService = Mockito.mock(LoggerService.class);
-        UserService userService = new UserService(userRepository, loggerService, passwordEncoder );
+        LoggerServiceImpl loggerService = Mockito.mock(LoggerServiceImpl.class);
+        UserServiceImpl userService = new UserServiceImpl(userRepository, loggerService, passwordEncoder );
 
         UserEntity user = new UserEntity();
         UserRequestDto userRequestDto = new UserRequestDto();
@@ -123,8 +123,8 @@ public class UserServiceTest {
         PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
         ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         UserRepository userRepository = Mockito.mock(UserRepository.class);
-        LoggerService loggerService = Mockito.mock(LoggerService.class);
-        UserService userService = new UserService(userRepository, loggerService, passwordEncoder );
+        LoggerServiceImpl loggerService = Mockito.mock(LoggerServiceImpl.class);
+        UserServiceImpl userService = new UserServiceImpl(userRepository, loggerService, passwordEncoder );
 
         UserRequestDto userRequestDto = new UserRequestDto();
 

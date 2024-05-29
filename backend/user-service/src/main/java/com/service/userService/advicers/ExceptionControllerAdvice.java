@@ -1,7 +1,7 @@
 package com.service.userService.advicers;
 
 import com.service.userService.exceptions.EntityPersistenceException;
-import com.service.userService.service.LoggerService;
+import com.service.userService.service.impl.LoggerServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler  {
 
-    private final LoggerService loggerService;
+    private final LoggerServiceImpl loggerService;
 
 
     @ExceptionHandler(Exception.class)

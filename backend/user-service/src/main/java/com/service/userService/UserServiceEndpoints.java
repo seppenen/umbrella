@@ -41,21 +41,18 @@ public class UserServiceEndpoints {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRequestDto userRequestDto) {
-        UserResponseDto userResponseDto = userFacade.registerUser(userRequestDto);
-        return ResponseEntity.ok(userResponseDto);
+        return ResponseEntity.ok(userFacade.registerUser(userRequestDto));
     }
 
  @PostMapping("/login")
     public Mono<UserLoginResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
-     UserLoginResponseDto user = userFacade.login(userLoginDto);
-        return Mono.just(user);
+        return Mono.just(userFacade.login(userLoginDto));
     }
 
 
     @GetMapping("/users")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        List<UserResponseDto> users = userFacade.getAllUsers();
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userFacade.getAllUsers());
     }
 
     @GetMapping("/health")

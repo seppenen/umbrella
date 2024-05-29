@@ -40,7 +40,6 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     }
 
     private Mono<AuthenticationTokenData> verifyToken(String token) {
-
         return tokenService.validateToken(token)
                 .filter(decodedJWT -> decodedJWT.getAudience() != null && !decodedJWT.getAudience().isEmpty())
                 .flatMap(tokenData -> getAppUser(tokenData, token));

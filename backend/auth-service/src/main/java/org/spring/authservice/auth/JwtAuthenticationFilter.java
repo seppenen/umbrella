@@ -1,10 +1,10 @@
 package org.spring.authservice.auth;
 
+import com.auth0.jwt.interfaces.Payload;
 import org.jetbrains.annotations.NotNull;
 import org.spring.authservice.service.AuthService;
 import org.spring.authservice.service.JwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -41,10 +41,10 @@ public class JwtAuthenticationFilter implements WebFilter {
         String token = jwtService.extractToken(exchange);
         boolean isTokenPresent = authService.findRefreshToken(token).isPresent();
         if (token != null && isTokenPresent) {
-            jwtService.validateToken(token);
-            Authentication auth = new UsernamePasswordAuthenticationToken(token, token, new ArrayList<>());
-            return chain.filter(exchange)
-                    .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
+             return jwtService.validateToken(token).map(Payload::getIssuer)
+                    .map(iss -> new UsernamePasswordAuthenticationToken(iss, token, new ArrayList<>()))
+                    .flatMap(auth -> chain.filter(exchange)
+                            .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth)));
             }
         return chain.filter(exchange);
     }

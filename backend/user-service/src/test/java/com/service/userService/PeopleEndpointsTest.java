@@ -3,7 +3,7 @@ package com.service.userService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.userService.dto.UserResponseDto;
-import com.service.userService.service.LoggerService;
+import com.service.userService.service.impl.LoggerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,7 +34,7 @@ class PeopleEndpointsTest {
     @MockBean
     private UserFacade userFacade;
     @MockBean
-    private LoggerService loggerService;
+    private LoggerServiceImpl loggerService;
 
 
     @Test

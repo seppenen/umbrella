@@ -6,7 +6,7 @@ import com.service.userService.dto.UserLoginResponseDto;
 import com.service.userService.dto.UserRequestDto;
 import com.service.userService.dto.UserResponseDto;
 import com.service.userService.entity.UserEntity;
-import com.service.userService.service.UserServiceInterface;
+import com.service.userService.service.UserService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,20 +14,17 @@ import java.util.List;
 @Component
 public class UserFacade {
 
-    private final UserServiceInterface userService;
+    private final UserService userService;
     private final ObjectMapper mapper;
 
-    public UserFacade(UserServiceInterface userService, ObjectMapper mapper) {
+    public UserFacade(UserService userService, ObjectMapper mapper) {
         this.userService = userService;
         this.mapper = mapper;
     }
 
     public UserLoginResponseDto login(UserLoginDto userLoginDto) {
         UserEntity userEntity = userService.loginUser(convert(userLoginDto, UserEntity.class));
-        UserLoginResponseDto userLoginResponseDto = convert(userEntity, UserLoginResponseDto.class);
-        userLoginResponseDto.setId(userLoginResponseDto.getId());
-        userLoginResponseDto.setEmail(userEntity.getEmail());
-        return userLoginResponseDto;
+        return convert(userEntity, UserLoginResponseDto.class);
     }
 
     public UserResponseDto registerUser(UserRequestDto userRequestDto) {
