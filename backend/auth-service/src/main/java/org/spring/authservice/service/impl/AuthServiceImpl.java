@@ -5,9 +5,6 @@ import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.dto.UserEntityDto;
 import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.repository.TokenRepository;
-import org.spring.authservice.service.IAuthService;
-import org.spring.authservice.service.ILoggerService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -15,15 +12,12 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @Service
-public class AuthService implements IAuthService {
-
+public class AuthServiceImpl implements org.spring.authservice.service.AuthService {
     private final UserServiceClient userServiceClient;
-    private final ILoggerService loggerService;
     private final TokenRepository tokenRepository;
 
-    public AuthService(UserServiceClient userServiceClient, ILoggerService loggerService, TokenRepository tokenRepository) {
+    public AuthServiceImpl(UserServiceClient userServiceClient, TokenRepository tokenRepository) {
         this.userServiceClient = userServiceClient;
-        this.loggerService = loggerService;
         this.tokenRepository = tokenRepository;
     }
 
@@ -31,31 +25,19 @@ public class AuthService implements IAuthService {
         return userServiceClient.requestUserAuthentication(userCredentialDto);
     }
 
-
     @Transactional
     public void updateToken(TokenStateEntity tokenStateEntity) {
         TokenStateEntity persistedTokenStateEntity = tokenRepository.save(tokenStateEntity);
         deleteAllButLatestToken(persistedTokenStateEntity);
-        logTokenAction("Token persisted", persistedTokenStateEntity.getEmail());
     }
 
     public void deleteAllButLatestToken(TokenStateEntity persistedTokenStateEntity) {
         String email = persistedTokenStateEntity.getEmail();
-        Long id = persistedTokenStateEntity.getId();
-        tokenRepository.deleteAll(tokenRepository.findByEmailAndIdNot(email, id));
-        logTokenAction("Previous token deleted", email);
+        String token = persistedTokenStateEntity.getToken();
+        tokenRepository.deleteAll(tokenRepository.findByEmailAndTokenNot(email, token));
     }
 
-    public Optional<TokenStateEntity> findTokenByToken(String token) {
+    public Optional<TokenStateEntity> findRefreshToken(String token) {
         return tokenRepository.findByToken(token);
     }
-
-    public void logTokenAction(String message, String data) {
-        loggerService.getInfoBuilder()
-                .withMessage(message)
-                .withData(data)
-                .withStatusCode(HttpStatus.OK)
-                .log();
-    }
-
 }

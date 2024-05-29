@@ -2,13 +2,12 @@ package org.spring.authservice.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spring.authservice.service.ILoggerService;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoggerService implements ILoggerService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerService.class);
+public class LoggerServiceImpl implements org.spring.authservice.service.LoggerService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerServiceImpl.class);
 
     public LogErrorBuilder getErrorBuilder() {
         return new LogErrorBuilder();

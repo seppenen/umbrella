@@ -7,9 +7,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
-public interface IAuthService {
+public interface AuthService {
 
      void updateToken(TokenStateEntity tokenStateEntity);
      Mono<UserEntityDto> requestAuthenticatedUser(UserCredentialDto userCredentialDto);
-     Optional<TokenStateEntity> findTokenByToken(String token);
+     Optional<TokenStateEntity> findRefreshToken(String token);
 }

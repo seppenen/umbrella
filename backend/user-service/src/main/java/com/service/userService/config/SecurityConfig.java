@@ -26,7 +26,6 @@ public class SecurityConfig {
         this.authServiceFilter = authServiceFilter;
     }
 
-
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
 
@@ -55,5 +54,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 
 }

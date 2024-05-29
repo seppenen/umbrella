@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<TokenStateEntity, Long> {
 
-    List<? extends TokenStateEntity> findByEmailAndIdNot(String email, Long id);
+    List<? extends TokenStateEntity> findByEmailAndTokenNot(String email, String token);
 
     Optional<TokenStateEntity> findByToken(String token);
 }

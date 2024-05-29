@@ -1,8 +1,9 @@
 package org.spring.authservice;
 
-import org.spring.authservice.dto.RefreshTokenResponseDto;
 import org.spring.authservice.dto.UserCredentialDto;
-import org.spring.authservice.service.impl.JwtService;
+import org.spring.authservice.service.JwtService;
+import org.spring.authservice.service.impl.JwtServiceImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,18 +15,22 @@ import reactor.core.publisher.Mono;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.spring.authservice.utility.TokenUtility.ACCESS_TOKEN;
+import static org.spring.authservice.utility.TokenUtility.ACCESS_TOKEN_EXPIRE_TIME;
+import static org.spring.authservice.utility.TokenUtility.TOKEN_VALID;
+
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/v1")
 public class AuthController {
     private static final String STATUS = "status";
-    private static final String TOKEN_VALID = "tokenValid";
-    private static final String TOKEN_KEY = "access_token";
+
     private final JwtService jwtService;
 
     private final AuthFacade authFacade;
 
-    public AuthController(JwtService jwtService, AuthFacade authFacade) {
+    public AuthController(JwtServiceImpl jwtService, AuthFacade authFacade) {
         this.jwtService = jwtService;
         this.authFacade = authFacade;
     }
@@ -38,13 +43,16 @@ public class AuthController {
 
     //TODO:This method creates a new refresh token
     @PostMapping("/authenticate")
-    public Mono<RefreshTokenResponseDto> authenticate(@RequestBody UserCredentialDto userRequestDto) {
+    public Mono<ResponseEntity<Void>> authenticate(@RequestBody UserCredentialDto userRequestDto) {
         return authFacade.obtainTokenIfAuthenticated(userRequestDto);
     }
 
     @PostMapping("/access-token")
-    public Mono<Map<String, String>> getAccessToken() {
-        return Mono.just(Collections.singletonMap(TOKEN_KEY, jwtService.generateAccessToken()));
+    public Mono<ResponseEntity<Void>> getAccessToken() {
+        return jwtService.generateToken(ACCESS_TOKEN_EXPIRE_TIME)
+                .map(accessToken -> ResponseEntity.ok()
+                        .header(ACCESS_TOKEN, accessToken)
+                        .build());
     }
 
     @GetMapping("/health")

@@ -1,8 +1,8 @@
 package org.spring.authservice.config;
 
 
+import org.spring.authservice.auth.JwtAuthenticationFilter;
 import org.spring.authservice.exceptionHandlers.DelegatedServerAuthenticationEntryPoint;
-import org.spring.authservice.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

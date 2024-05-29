@@ -40,20 +40,14 @@ public class AuthServiceFilter implements WebFilter {
 
         String path = exchange.getRequest().getURI().getPath();
         boolean isIgnoredPath = Arrays.stream(ALLOWED_PATHS).anyMatch(path::contains);
-
         if (isIgnoredPath) {
-
             return chain.filter(exchange);
         }
-
         String token = extractToken(exchange);
         return validateAndSetSecurityContext(token, chain, exchange);
-
     }
 
-
     private String extractToken(ServerWebExchange exchange) {
-
         String bearerToken = exchange.getRequest().getHeaders().getFirst("Authorization");
         if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);

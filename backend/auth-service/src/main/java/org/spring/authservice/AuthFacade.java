@@ -1,32 +1,49 @@
 package org.spring.authservice;
 
-import org.spring.authservice.dto.RefreshTokenResponseDto;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.entity.TokenStateEntity;
-import org.spring.authservice.service.IAuthService;
-import org.spring.authservice.service.IJwtService;
+import org.spring.authservice.service.AuthService;
+import org.spring.authservice.service.JwtService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import static org.spring.authservice.utility.TokenUtility.ACCESS_TOKEN;
+import static org.spring.authservice.utility.TokenUtility.ACCESS_TOKEN_EXPIRE_TIME;
+import static org.spring.authservice.utility.TokenUtility.REFRESH_TOKEN;
+import static org.spring.authservice.utility.TokenUtility.REFRESH_TOKEN_EXPIRE_TIME;
+
 @Component
 public class AuthFacade {
-    private final IAuthService authService;
-    private final IJwtService jwtService;
 
-    public AuthFacade(IAuthService authService, IJwtService jwtService) {
+    private final AuthService authService;
+    private final JwtService jwtService;
+
+    public AuthFacade(AuthService authService, JwtService jwtService) {
         this.authService = authService;
         this.jwtService = jwtService;
     }
 
-    public Mono<RefreshTokenResponseDto> obtainTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
+    public Mono<ResponseEntity<Void>> obtainTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
         return authService.requestAuthenticatedUser(userCredentialDto)
-                .flatMap(userEntityDto -> {
-                    String refreshToken = jwtService.generateRefreshToken();
-                    TokenStateEntity tokenStateEntity = new TokenStateEntity(userEntityDto.getEmail(), refreshToken);
+                .flatMap(userEntityDto -> Mono.zip(
+                        jwtService.generateToken(ACCESS_TOKEN_EXPIRE_TIME),
+                        jwtService.generateToken(REFRESH_TOKEN_EXPIRE_TIME)
+                ).flatMap(tokens -> {
+                    String refreshToken = tokens.getT1();
+                    String accessToken = tokens.getT2();
+                    String email = userEntityDto.getEmail();
+                    TokenStateEntity tokenStateEntity = new TokenStateEntity(refreshToken, email);
                     authService.updateToken(tokenStateEntity);
-                    return Mono.just(new RefreshTokenResponseDto(refreshToken));
-                });
+                    return buildResponseWithHeaders(refreshToken, accessToken);
+                }));
     }
 
-
+    private Mono<ResponseEntity<Void>> buildResponseWithHeaders(String refreshToken, String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(REFRESH_TOKEN, refreshToken);
+        headers.add(ACCESS_TOKEN, accessToken);
+        return Mono.just(ResponseEntity.ok().headers(headers).build());
+    }
 }
