@@ -3,6 +3,7 @@ package org.spring.authservice.service.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.RequiredArgsConstructor;
 import org.spring.authservice.enums.TokenEnum;
 import org.spring.authservice.service.JwtService;
 import org.spring.authservice.service.LoggerService;
@@ -13,14 +14,12 @@ import reactor.core.publisher.Mono;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
     private static final Algorithm SECRET_KEY = Algorithm.HMAC256(TokenEnum.SECRET.getValue());
 
     private final LoggerService loggerService;
 
-    public JwtServiceImpl(LoggerService loggerService) {
-        this.loggerService = loggerService;
-    }
 
     public Mono<String> generateToken(long expireTime) {
         return Mono.just(JWT.create()

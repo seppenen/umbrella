@@ -1,6 +1,7 @@
 package org.spring.authservice.client;
 
 
+import lombok.RequiredArgsConstructor;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.dto.UserEntityDto;
 import org.springframework.stereotype.Component;
@@ -10,13 +11,11 @@ import reactor.core.publisher.Mono;
 
 
 @Component
+@RequiredArgsConstructor
 public class UserServiceClient extends BaseClientResolver {
 
     private final WebClient userServiceWebClient;
 
-    public UserServiceClient(WebClient userServiceWebClient) {
-        this.userServiceWebClient = userServiceWebClient;
-    }
 
     public Mono<UserEntityDto> requestUserAuthentication(UserCredentialDto userCredentialDto) {
         return userServiceWebClient.post()

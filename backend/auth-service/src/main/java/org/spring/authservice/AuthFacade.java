@@ -1,5 +1,6 @@
 package org.spring.authservice;
 
+import lombok.RequiredArgsConstructor;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.service.AuthService;
@@ -15,15 +16,12 @@ import static org.spring.authservice.utility.TokenUtility.REFRESH_TOKEN;
 import static org.spring.authservice.utility.TokenUtility.REFRESH_TOKEN_EXPIRE_TIME;
 
 @Component
+@RequiredArgsConstructor
 public class AuthFacade {
 
     private final AuthService authService;
     private final JwtService jwtService;
 
-    public AuthFacade(AuthService authService, JwtService jwtService) {
-        this.authService = authService;
-        this.jwtService = jwtService;
-    }
 
     public Mono<ResponseEntity<Void>> obtainTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
         return authService.requestAuthenticatedUser(userCredentialDto)

@@ -1,5 +1,6 @@
 package org.spring.authservice.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.spring.authservice.client.UserServiceClient;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.dto.UserEntityDto;
@@ -12,14 +13,11 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements org.spring.authservice.service.AuthService {
     private final UserServiceClient userServiceClient;
     private final TokenRepository tokenRepository;
 
-    public AuthServiceImpl(UserServiceClient userServiceClient, TokenRepository tokenRepository) {
-        this.userServiceClient = userServiceClient;
-        this.tokenRepository = tokenRepository;
-    }
 
     public Mono<UserEntityDto> requestAuthenticatedUser(UserCredentialDto userCredentialDto) {
         return userServiceClient.requestUserAuthentication(userCredentialDto);

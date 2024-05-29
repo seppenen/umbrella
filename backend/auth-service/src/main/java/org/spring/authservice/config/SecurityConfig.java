@@ -1,6 +1,7 @@
 package org.spring.authservice.config;
 
 
+import lombok.RequiredArgsConstructor;
 import org.spring.authservice.auth.JwtAuthenticationFilter;
 import org.spring.authservice.exceptionHandlers.DelegatedServerAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
@@ -14,15 +15,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-
-    }
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {

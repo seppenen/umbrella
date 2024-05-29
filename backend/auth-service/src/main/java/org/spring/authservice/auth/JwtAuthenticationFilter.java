@@ -1,6 +1,7 @@
 package org.spring.authservice.auth;
 
 import com.auth0.jwt.interfaces.Payload;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.spring.authservice.service.AuthService;
 import org.spring.authservice.service.JwtService;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter implements WebFilter {
     private final JwtService jwtService;
     private final AuthService authService;
@@ -26,10 +28,6 @@ public class JwtAuthenticationFilter implements WebFilter {
             "/swagger-ui",
             "/v3/api-docs"
     };
-    public JwtAuthenticationFilter(JwtService jwtService, AuthService authService) {
-        this.jwtService = jwtService;
-        this.authService = authService;
-    }
 
     @Override
     public @NotNull Mono<Void> filter(@NotNull ServerWebExchange exchange, WebFilterChain chain) {

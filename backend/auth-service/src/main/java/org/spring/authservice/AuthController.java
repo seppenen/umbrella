@@ -1,8 +1,8 @@
 package org.spring.authservice;
 
+import lombok.RequiredArgsConstructor;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.service.JwtService;
-import org.spring.authservice.service.impl.JwtServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,7 @@ import static org.spring.authservice.utility.TokenUtility.TOKEN_VALID;
 
 
 @RestController
+@RequiredArgsConstructor
 @CrossOrigin("*")
 @RequestMapping("/api/v1")
 public class AuthController {
@@ -30,10 +31,6 @@ public class AuthController {
 
     private final AuthFacade authFacade;
 
-    public AuthController(JwtServiceImpl jwtService, AuthFacade authFacade) {
-        this.jwtService = jwtService;
-        this.authFacade = authFacade;
-    }
 
     //TODO: this method validate access token
     @PostMapping("/authorize")

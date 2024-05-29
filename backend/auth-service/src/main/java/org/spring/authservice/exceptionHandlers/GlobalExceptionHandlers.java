@@ -3,6 +3,7 @@ package org.spring.authservice.exceptionHandlers;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.spring.authservice.service.LoggerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -16,14 +17,10 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
+
     private final LoggerService loggerService;
-
-
-    public GlobalExceptionHandlers(LoggerService loggerService) {
-        this.loggerService = loggerService;
-
-    }
 
     @ExceptionHandler({
             RuntimeException.class,
