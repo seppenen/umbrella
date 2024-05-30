@@ -41,12 +41,13 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 
     private Mono<AuthenticationTokenData> verifyToken(String token) {
         return tokenService.validateToken(token)
-                .filter(decodedJWT -> decodedJWT.getAudience() != null && !decodedJWT.getAudience().isEmpty())
+                .filter(decodedJWT -> decodedJWT.getIssuer() != null && !decodedJWT.getSignature().isEmpty())
                 .flatMap(tokenData -> getAppUser(tokenData, token));
     }
 
     private Mono<AuthenticationTokenData> getAppUser(DecodedJWT decodedJWT, String token) {
         return Mono.just(AuthenticationTokenData.builder()
+                .email(decodedJWT.getClaim("principal").asString())
                 .token(token)
                 .build()
         );

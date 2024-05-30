@@ -11,13 +11,11 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthServiceClient extends BaseClientResolver {
 
-
     private final WebClient authServiceWebClient;
 
     public AuthServiceClient( WebClient authServiceWebClient) {
         this.authServiceWebClient = authServiceWebClient;
     }
-
 
     public Mono<Boolean> authorize(String token) {
         return buildAuthServerWebClient(authServiceWebClient, token)

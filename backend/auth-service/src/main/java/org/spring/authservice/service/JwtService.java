@@ -5,7 +5,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 public interface JwtService {
-     Mono<String> generateToken(long expireTime);
+     Mono<String> generateToken(long expireTime, String type, String email);
      Mono<DecodedJWT> validateToken(String token);
      String extractToken(ServerWebExchange exchange);
 }

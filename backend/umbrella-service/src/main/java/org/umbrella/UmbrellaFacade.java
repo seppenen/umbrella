@@ -1,8 +1,8 @@
 package org.umbrella;
 
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import org.umbrella.client.AuthServiceClient;
 import org.umbrella.client.UserServiceClient;
 import org.umbrella.dto.EntrepreneurDto;
 import org.umbrella.dto.UserResponseDto;
@@ -13,18 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class UmbrellaFacade {
+
     private final UserServiceClient userServiceClient;
-    private final AuthServiceClient authServiceClient;
     private final ModelMapper mapper;
     private final EntrepreneurServiceInterface entrepreneurService;
-
-    public UmbrellaFacade(UserServiceClient userServiceClient, AuthServiceClient authServiceClient, ModelMapper mapper, EntrepreneurServiceInterface entrepreneurService) {
-        this.userServiceClient = userServiceClient;
-        this.authServiceClient = authServiceClient;
-        this.mapper = mapper;
-        this.entrepreneurService = entrepreneurService;
-    }
 
     /**
      * Retrieves the list of users from the User Service.

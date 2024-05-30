@@ -3,6 +3,7 @@ package org.spring.authservice;
 import lombok.RequiredArgsConstructor;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.entity.TokenStateEntity;
+import org.spring.authservice.enums.TokenEnum;
 import org.spring.authservice.service.AuthService;
 import org.spring.authservice.service.JwtService;
 import org.springframework.http.HttpHeaders;
@@ -11,9 +12,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import static org.spring.authservice.utility.TokenUtility.ACCESS_TOKEN;
-import static org.spring.authservice.utility.TokenUtility.ACCESS_TOKEN_EXPIRE_TIME;
 import static org.spring.authservice.utility.TokenUtility.REFRESH_TOKEN;
-import static org.spring.authservice.utility.TokenUtility.REFRESH_TOKEN_EXPIRE_TIME;
 
 @Component
 @RequiredArgsConstructor
@@ -24,19 +23,30 @@ public class AuthFacade {
 
 
     public Mono<ResponseEntity<Void>> obtainTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
+        String email = userCredentialDto.getEmail();
         return authService.requestAuthenticatedUser(userCredentialDto)
-                .flatMap(userEntityDto -> Mono.zip(
-                        jwtService.generateToken(ACCESS_TOKEN_EXPIRE_TIME),
-                        jwtService.generateToken(REFRESH_TOKEN_EXPIRE_TIME)
-                ).flatMap(tokens -> {
-                    String refreshToken = tokens.getT1();
-                    String accessToken = tokens.getT2();
-                    String email = userEntityDto.getEmail();
-                    TokenStateEntity tokenStateEntity = new TokenStateEntity(refreshToken, email);
-                    authService.updateToken(tokenStateEntity);
-                    return buildResponseWithHeaders(refreshToken, accessToken);
-                }));
+                .flatMap(userEntityDto -> handleTokenOperation(email));
     }
+
+    private Mono<ResponseEntity<Void>> handleTokenOperation(String email) {
+        return Mono.zip(
+                jwtService.generateToken(
+                        TokenEnum.REFRESH_TOKEN_EXPIRE_TIME.getAsInteger(),
+                        TokenEnum.REFRESH_TOKEN_TYPE.getAsString(),
+                        email),
+                jwtService.generateToken(
+                        TokenEnum.ACCESS_TOKEN_EXPIRE_TIME.getAsInteger(),
+                        TokenEnum.ACCESS_TOKEN_TYPE.getAsString(),
+                        email)
+        ).flatMap(tokens -> {
+            String refreshToken = tokens.getT1();
+            String accessToken = tokens.getT2();
+            TokenStateEntity tokenStateEntity = new TokenStateEntity(refreshToken, email);
+            authService.updateToken(tokenStateEntity);
+            return buildResponseWithHeaders(refreshToken, accessToken);
+        });
+    }
+
 
     private Mono<ResponseEntity<Void>> buildResponseWithHeaders(String refreshToken, String accessToken) {
         HttpHeaders headers = new HttpHeaders();

@@ -1,5 +1,6 @@
 package org.umbrella.apigateway.advicers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -11,14 +12,10 @@ import org.springframework.web.server.ServerWebExchange;
 import org.umbrella.apigateway.service.LoggerService;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
+
     private final LoggerService loggerService;
-
-
-    public GlobalExceptionHandlers(LoggerService loggerService) {
-        this.loggerService = loggerService;
-
-    }
 
     @ExceptionHandler({
             RuntimeException.class,

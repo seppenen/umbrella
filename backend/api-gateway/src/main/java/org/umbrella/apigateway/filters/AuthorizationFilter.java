@@ -1,5 +1,6 @@
 package org.umbrella.apigateway.filters;
 
+import lombok.AllArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Component
+@AllArgsConstructor
 public class AuthorizationFilter implements GlobalFilter {
 
     private static final String[] ALLOWED_PATHS = {
@@ -27,16 +29,12 @@ public class AuthorizationFilter implements GlobalFilter {
 
     private final AuthServiceClient authServiceClient;
 
-    public AuthorizationFilter(AuthServiceClient authServiceClient) {
-        this.authServiceClient = authServiceClient;
-    }
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         if (isAllowedPath(exchange)) {
             Optional<String> token = extractToken(exchange);
             if (token.isPresent()) {
-                return validateAndHandleErrors(token.get(), chain, exchange);
+                return handleAuthorization(token.get(), chain, exchange);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, null);
             }
@@ -51,7 +49,7 @@ public class AuthorizationFilter implements GlobalFilter {
 
 
 
-    private Mono<Void> validateAndHandleErrors(String token, GatewayFilterChain chain, ServerWebExchange exchange) {
+    private Mono<Void> handleAuthorization(String token, GatewayFilterChain chain, ServerWebExchange exchange) {
         return authServiceClient.authorize(token)
                 .filter(Boolean::booleanValue)
                 .switchIfEmpty(Mono.error(new AuthenticationException("Not authorized") {}))

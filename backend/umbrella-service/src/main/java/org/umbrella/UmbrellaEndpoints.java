@@ -1,5 +1,6 @@
 package org.umbrella;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,15 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @RestController
+@AllArgsConstructor
 @CrossOrigin("*")
 @RequestMapping("/api/v1")
 public class UmbrellaEndpoints {
 
     private final UmbrellaFacade umbrellaFacade;
-
-    public UmbrellaEndpoints(UmbrellaFacade umbrellaFacade) {
-        this.umbrellaFacade = umbrellaFacade;
-    }
 
     /**
      * Retrieves the list of users from the UserService.
@@ -35,7 +33,6 @@ public class UmbrellaEndpoints {
     public ResponseEntity<List<UserResponseDto>> fetchUsersFromUserService() {
         return ResponseEntity.ok(umbrellaFacade.getUsersFromUserService());
     }
-
 
     /**
      * Removes an entrepreneur by their ID.

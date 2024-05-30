@@ -1,5 +1,6 @@
 package org.spring.authservice.exceptionHandlers;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,6 +17,8 @@ import org.springframework.web.reactive.result.method.annotation.ResponseEntityE
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
+import java.util.Objects;
+
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
@@ -24,6 +27,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             RuntimeException.class,
+            JwtException.class,
             AuthenticationException.class,
             SignatureException.class,
             MalformedJwtException.class,
@@ -37,7 +41,8 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
 
     private ResponseStatusException processException(ServerWebExchange exchange, Exception ex) {
         ServerHttpResponse response = setResponseUnauthorized(exchange);
-        loggerService.getInfoBuilder().withStatusCode(response.getStatusCode()).withData(ex.getMessage()).log();
+        String errorCode = Objects.requireNonNull(setResponseUnauthorized(exchange).getStatusCode()).toString();
+        loggerService.getInfoBuilder().withStatusCode(errorCode).withData(ex.getMessage()).log();
         return new ResponseStatusException(response.getStatusCode(), ex.getMessage());
     }
 

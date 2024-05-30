@@ -12,5 +12,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationTokenData {
+    private String email;
     private String token;
 }

@@ -10,12 +10,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import static org.spring.authservice.utility.TokenUtility.TOKEN_PREFIX;
+
+/**
+ * This class implements the ServerSecurityContextRepository interface and provides methods for saving and loading the security context of a server web exchange.
+ * The saved security context is not supported and throws an UnsupportedOperationException if called.
+ * The loaded security context is obtained from the server web exchange by extracting the authentication token from the request's authorization header.
+ * The authentication token is then used to authenticate the user using the provided AuthenticationManager.
+ * If the authentication is successful, the SecurityContextImpl containing the authenticated user is returned.
+ *
+ * Note: This class requires an instance of AuthenticationManager to be provided for authentication.
+ */
 @Component
 @AllArgsConstructor
 
 public class SecurityContextRepository implements ServerSecurityContextRepository {
 
-    private static final String TOKEN_PREFIX = "Bearer ";
+
     private final AuthenticationManager authenticationManager;
 
 
@@ -26,7 +37,6 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
 
     @Override
     public Mono<SecurityContext> load(ServerWebExchange serverWebExchange) {
-
         return Mono.just(serverWebExchange.getRequest())
                 .mapNotNull(serverHttpRequest -> serverHttpRequest.getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
                 .filter(authenticationHeader -> authenticationHeader !=null && authenticationHeader.startsWith(TOKEN_PREFIX))

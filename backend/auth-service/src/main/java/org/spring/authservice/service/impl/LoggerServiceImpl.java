@@ -3,7 +3,6 @@ package org.spring.authservice.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring.authservice.service.LoggerService;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,26 +20,36 @@ public class LoggerServiceImpl implements LoggerService {
     public static class LogErrorBuilder {
 
         private Throwable error;
-        private HttpStatusCode httpStatusCode;
+        private String httpStatusCode;
+        private String message;
 
         public LogErrorBuilder withError(Throwable error) {
             this.error = error;
             return this;
         }
 
-        public LogErrorBuilder withStatusCode(HttpStatusCode httpStatusCode) {
+        public LogErrorBuilder withStatusCode(String httpStatusCode) {
             this.httpStatusCode = httpStatusCode;
             return this;
         }
 
+        public LogErrorBuilder withMessage(String message) {
+            this.message = message;
+            return this;
+        }
+
         public void log() {
-            LOGGER.error("Exception: {}, HTTP Status: {}", error.toString(), httpStatusCode.value(), error);
+            if (httpStatusCode != null && message != null) {
+                LOGGER.info("{}, Status: {}", message, httpStatusCode);
+            } else {
+                LOGGER.info("{}", message);
+            }
         }
     }
 
     public static class LogInfoBuilder {
         private String message;
-        private HttpStatusCode httpStatusCode;
+        private String httpStatusCode;
         private String data;
 
         public LogInfoBuilder withMessage(String message) {
@@ -48,7 +57,7 @@ public class LoggerServiceImpl implements LoggerService {
             return this;
         }
 
-        public LogInfoBuilder withStatusCode(HttpStatusCode httpStatusCode) {
+        public LogInfoBuilder withStatusCode(String httpStatusCode) {
             this.httpStatusCode = httpStatusCode;
             return this;
         }
@@ -60,7 +69,7 @@ public class LoggerServiceImpl implements LoggerService {
 
         public void log() {
             if (httpStatusCode != null && data != null) {
-                LOGGER.info("{}, Status: {}, {}", message, httpStatusCode.value(), data);
+                LOGGER.info("{}, Status: {}, {}", message, httpStatusCode, data);
             } else {
                 LOGGER.info("{}", message);
             }
