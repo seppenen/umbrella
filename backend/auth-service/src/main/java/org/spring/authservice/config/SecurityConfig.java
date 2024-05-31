@@ -3,7 +3,6 @@ package org.spring.authservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.spring.authservice.auth.AuthenticationManager;
-import org.spring.authservice.auth.JwtAuthenticationFilter;
 import org.spring.authservice.auth.SecurityContextRepository;
 import org.spring.authservice.exceptionHandlers.DelegatedServerAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,6 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
 

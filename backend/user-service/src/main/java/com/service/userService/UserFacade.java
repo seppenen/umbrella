@@ -7,24 +7,39 @@ import com.service.userService.dto.UserRequestDto;
 import com.service.userService.dto.UserResponseDto;
 import com.service.userService.entity.UserEntity;
 import com.service.userService.service.UserService;
+import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 @Component
+@AllArgsConstructor
 public class UserFacade {
 
     private final UserService userService;
+    private ReactiveAuthenticationManager authenticationManager;
     private final ObjectMapper mapper;
 
-    public UserFacade(UserService userService, ObjectMapper mapper) {
-        this.userService = userService;
-        this.mapper = mapper;
-    }
 
-    public UserLoginResponseDto login(UserLoginDto userLoginDto) {
-        UserEntity userEntity = userService.loginUser(convert(userLoginDto, UserEntity.class));
-        return convert(userEntity, UserLoginResponseDto.class);
+
+    public Mono<UserLoginResponseDto> login(UserLoginDto userLoginDto) {
+        Mono<Authentication> authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword()));
+
+        return authentication.flatMap(auth -> {
+            if (auth.isAuthenticated()) {
+                UserDetails userDetails = (UserDetails) auth.getPrincipal();
+                return Mono.just(new UserLoginResponseDto(userDetails.getUsername()));
+            } else {
+                return Mono.error(new UsernameNotFoundException("Invalid user request."));
+            }
+        });
     }
 
     public UserResponseDto registerUser(UserRequestDto userRequestDto) {

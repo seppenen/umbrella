@@ -9,6 +9,8 @@ public enum TokenEnum {
     REFRESH_TOKEN_TYPE("1"),
     REFRESH_TOKEN_EXPIRE_TIME(1000 * 60 * 240),
     ACCESS_TOKEN_EXPIRE_TIME(1000 * 60 * 15),
+    
+    //TODO: Store secret key in a azure vault
     SECRET("357638792F423F4428472B4B6250655368566D597133743677397A2443264629");
 
     private final Object value;

@@ -7,8 +7,12 @@ package com.service.userService.config;
  */
 
 import com.service.userService.filters.AuthServiceFilter;
+import com.service.userService.helpers.UserDetailService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -18,13 +22,11 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @EnableWebFluxSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     private final AuthServiceFilter authServiceFilter;
-
-    public SecurityConfig(AuthServiceFilter authServiceFilter) {
-        this.authServiceFilter = authServiceFilter;
-    }
+    private final UserDetailService userDetailService;
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
@@ -50,11 +52,15 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-
+    @Bean
+    public ReactiveAuthenticationManager authenticationManager() {
+        return new UserDetailsRepositoryReactiveAuthenticationManager(userDetailService);
+    }
 
 }

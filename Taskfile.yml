@@ -99,6 +99,7 @@ tasks:
       - |
         echo "Usage: 
           task up - Performs all the clean, build and setup tasks.
+          task redeploy-backend - Redeploy backend service
           task clean-docker - Stops and removes all Docker containers and images. 
           task empty-database - Removes all data. 
           task create-database - Create new db."

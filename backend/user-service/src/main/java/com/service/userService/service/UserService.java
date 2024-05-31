@@ -6,11 +6,10 @@ import java.util.List;
 
 public interface UserService {
 
-    UserEntity loginUser(UserEntity userEntity);
-
     UserEntity registerUser(UserEntity userEntity);
 
     UserEntity getUser(Long id);
 
     List<UserEntity> getAllUsers();
+
 }

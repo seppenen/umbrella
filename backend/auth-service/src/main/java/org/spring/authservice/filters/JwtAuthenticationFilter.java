@@ -1,4 +1,4 @@
-package org.spring.authservice.auth;
+package org.spring.authservice.filters;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.Payload;

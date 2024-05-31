@@ -31,12 +31,10 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class UserServiceEndpoints {
     private final UserFacade userFacade;
-
     public UserServiceEndpoints( UserFacade userFacade) {
 
         this.userFacade = userFacade;
     }
-
 
 
     @PostMapping("/register")
@@ -46,7 +44,7 @@ public class UserServiceEndpoints {
 
  @PostMapping("/login")
     public Mono<UserLoginResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
-        return Mono.just(userFacade.login(userLoginDto));
+        return userFacade.login(userLoginDto);
     }
 
 

@@ -11,9 +11,8 @@ import com.service.userService.exceptions.EntityPersistenceException;
 import com.service.userService.repository.UserRepository;
 import com.service.userService.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -31,21 +30,6 @@ public class UserServiceImpl implements UserService {
     private static final String USER_NOT_FOUND_MESSAGE = "User %s not found";
     private static final String PASSWORD_NOT_MATCH_MESSAGE = "Password does not match for user: %s";
 
-
-
-    @Override
-    public UserEntity loginUser(UserEntity userEntity) {
-        Optional<UserEntity> optionalUser = userRepository.findByEmail(userEntity.getEmail());
-        if(optionalUser.isEmpty()) {
-            throw new EntityNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, userEntity.getEmail()));
-        }
-
-        UserEntity foundUser = optionalUser.get();
-        if(!passwordEncoder.matches(userEntity.getPassword(), foundUser.getPassword())) {
-            throw new BadCredentialsException(String.format(PASSWORD_NOT_MATCH_MESSAGE, userEntity.getEmail()));
-        }
-        return foundUser;
-    }
 
     @Override
     public UserEntity registerUser(UserEntity userEntity) {
@@ -76,7 +60,8 @@ public class UserServiceImpl implements UserService {
     private RuntimeException throwNotFound(Long id) {
         return new EntityNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, id));
     }
-    }
+
+}
 
 
 

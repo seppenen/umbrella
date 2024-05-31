@@ -25,10 +25,10 @@ public class AuthFacade {
     public Mono<ResponseEntity<Void>> obtainTokenIfAuthenticated(UserCredentialDto userCredentialDto) {
         String email = userCredentialDto.getEmail();
         return authService.requestAuthenticatedUser(userCredentialDto)
-                .flatMap(userEntityDto -> handleTokenOperation(email));
+                .flatMap(userEntityDto -> handleTokenOps(email));
     }
 
-    private Mono<ResponseEntity<Void>> handleTokenOperation(String email) {
+    private Mono<ResponseEntity<Void>> handleTokenOps(String email) {
         return Mono.zip(
                 jwtService.generateToken(
                         TokenEnum.REFRESH_TOKEN_EXPIRE_TIME.getAsInteger(),

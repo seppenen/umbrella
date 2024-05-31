@@ -58,7 +58,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler  {
 
     private ResponseStatusException useApiErrorResponse(Throwable ex, HttpStatus status) {
         loggerService.logError(ex, status);
-        return new ResponseStatusException(status, status.getReasonPhrase(), ex);
+        return new ResponseStatusException(status, ex.getMessage(), ex);
     }
 
 
