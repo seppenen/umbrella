@@ -34,12 +34,9 @@ public class AuthFacade {
                         TokenEnum.ACCESS_TOKEN_EXPIRE_TIME.getAsInteger(),
                         TokenEnum.ACCESS_TOKEN_TYPE.getAsString(),
                         email)
-        ).flatMap(tokens -> {
-            String refreshToken = tokens.getT1();
-            String accessToken = tokens.getT2();
-            TokenStateEntity tokenStateEntity = new TokenStateEntity(refreshToken, email);
+        ).doOnNext(tokens -> {
+            TokenStateEntity tokenStateEntity = new TokenStateEntity(tokens.getT1(), email);
             authService.updateToken(tokenStateEntity);
-            return Mono.just(new TokenResponseEntity(refreshToken, accessToken));
-        });
+        }).map(tokens -> new TokenResponseEntity(tokens.getT1(), tokens.getT2()));
     }
 }
