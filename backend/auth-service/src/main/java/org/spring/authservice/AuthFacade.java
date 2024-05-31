@@ -2,8 +2,8 @@ package org.spring.authservice;
 
 import lombok.RequiredArgsConstructor;
 import org.spring.authservice.dto.UserCredentialDto;
+import org.spring.authservice.entity.AuthenticationTokenData;
 import org.spring.authservice.entity.TokenResponseEntity;
-import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.enums.TokenEnum;
 import org.spring.authservice.service.AuthService;
 import org.spring.authservice.service.JwtService;
@@ -35,7 +35,7 @@ public class AuthFacade {
                         TokenEnum.ACCESS_TOKEN_TYPE.getAsString(),
                         email)
         ).doOnNext(tokens -> {
-            TokenStateEntity tokenStateEntity = new TokenStateEntity(tokens.getT1(), email);
+            AuthenticationTokenData tokenStateEntity = new AuthenticationTokenData(tokens.getT1(), email);
             authService.updateToken(tokenStateEntity);
         }).map(tokens -> new TokenResponseEntity(tokens.getT1(), tokens.getT2()));
     }

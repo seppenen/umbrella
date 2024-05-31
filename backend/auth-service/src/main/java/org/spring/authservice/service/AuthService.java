@@ -2,14 +2,14 @@ package org.spring.authservice.service;
 
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.dto.UserEntityDto;
-import org.spring.authservice.entity.TokenStateEntity;
+import org.spring.authservice.entity.AuthenticationTokenData;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
 public interface AuthService {
 
-     void updateToken(TokenStateEntity tokenStateEntity);
+     void updateToken(AuthenticationTokenData tokenStateEntity);
      Mono<UserEntityDto> requestAuthenticatedUser(UserCredentialDto userCredentialDto);
-     Optional<TokenStateEntity> findRefreshToken(String token);
+     Optional<AuthenticationTokenData> findRefreshToken(String token);
 }
