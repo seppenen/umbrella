@@ -2,7 +2,6 @@ package org.spring.authservice.client;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -23,8 +22,7 @@ public abstract class BaseClientResolver {
             if (!respBody.isBlank()) {
                 var errorResponse = new ObjectMapper().readValue(respBody, Map.class);
                 String errorMessage = String.valueOf(errorResponse.get("detail"));
-                HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
-                return new ResponseStatusException(status, errorMessage);
+                return new ResponseStatusException(e.getStatusCode(), errorMessage);
             }
         } catch (Exception ex) {
             throw new HttpMessageNotReadableException("Cannot parse JSON response body");

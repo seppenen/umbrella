@@ -24,7 +24,7 @@ import static org.spring.authservice.utility.TokenUtility.TOKEN_VALID;
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @RequestMapping("/api/v1")
-public class AuthController {
+public class AuthController extends BaseController {
     private static final String STATUS = "status";
 
     private final JwtService jwtService;
@@ -39,7 +39,8 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public Mono<ResponseEntity<Void>> authenticate(@RequestBody UserCredentialDto userRequestDto) {
-        return authFacade.obtainTokenIfAuthenticated(userRequestDto);
+        return authFacade.obtainTokensIfAuthenticated(userRequestDto)
+                .flatMap(this::buildResponseWithHeaders);
     }
 
     @PostMapping("/access-token")
