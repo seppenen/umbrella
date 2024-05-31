@@ -1,20 +1,35 @@
 package org.spring.authservice.client;
 
 
-import org.springframework.http.HttpStatusCode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
 
 public abstract class BaseClientResolver {
-
-
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
     protected static final String X_REQUEST_HEADER = "X-Request";
     protected static final String HEADER_VALUE = "auth-service";
 
 
-    protected boolean isClientOrServerError(HttpStatusCode httpStatus) {
-        return httpStatus.is4xxClientError() || httpStatus.is5xxServerError();
+    public ResponseStatusException handle(WebClientResponseException e) {
+        try {
+            String respBody = e.getResponseBodyAsString();
+            if (!respBody.isBlank()) {
+                var errorResponse = new ObjectMapper().readValue(respBody, Map.class);
+                String errorMessage = String.valueOf(errorResponse.get("detail"));
+                HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
+                return new ResponseStatusException(status, errorMessage);
+            }
+        } catch (Exception ex) {
+            throw new HttpMessageNotReadableException("Cannot parse JSON response body");
+        }
+        return null;
     }
 
 
