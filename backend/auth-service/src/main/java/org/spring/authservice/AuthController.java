@@ -43,15 +43,12 @@ public class AuthController extends BaseController {
 
     @PostMapping("/access-token")
     public Mono<ResponseEntity<Void>> getAccessToken() {
-
         //TODO: to implement
         return jwtService.generateToken(TokenEnum.ACCESS_TOKEN_EXPIRE_TIME.getAsInteger(), TokenEnum.ACCESS_TOKEN_TYPE.getAsString(), null)
                 .map(accessToken -> ResponseEntity.ok()
                         .header(ACCESS_TOKEN, accessToken)
                         .build());
     }
-
-
 }
 
 
