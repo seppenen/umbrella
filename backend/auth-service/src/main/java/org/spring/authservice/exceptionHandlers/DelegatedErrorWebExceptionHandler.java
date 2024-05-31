@@ -22,9 +22,9 @@ public class DelegatedErrorWebExceptionHandler implements ErrorWebExceptionHandl
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         if (ex instanceof JwtException) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
-            }
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
         return Mono.error(ex);
     }
 }

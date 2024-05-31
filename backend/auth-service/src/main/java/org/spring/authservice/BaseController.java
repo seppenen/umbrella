@@ -1,9 +1,10 @@
 package org.spring.authservice;
 
 import org.spring.authservice.entity.TokenResponseEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -16,11 +17,20 @@ public abstract class BaseController {
 
     private static final String STATUS = "status";
 
-    protected Mono<ResponseEntity<Void>> buildResponseWithHeaders(TokenResponseEntity tokenResponseEntity) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(REFRESH_TOKEN, tokenResponseEntity.refreshToken());
-        headers.add(ACCESS_TOKEN, tokenResponseEntity.accessToken());
-        return Mono.just(ResponseEntity.ok().headers(headers).build());
+    protected Mono<Void> buildResponseWithCookie(TokenResponseEntity tokenResponseEntity, ServerWebExchange exchange) {
+        ServerHttpResponse response = exchange.getResponse();
+        addCookieToResponse(REFRESH_TOKEN, tokenResponseEntity.refreshToken(), response);
+        addCookieToResponse(ACCESS_TOKEN, tokenResponseEntity.accessToken(), response);
+        return Mono.empty();
+    }
+
+    private void addCookieToResponse(String cookieName, String cookieValue, ServerHttpResponse response) {
+        ResponseCookie cookie = ResponseCookie.from(cookieName, cookieValue)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .build();
+           response.addCookie(cookie);
     }
 
     @GetMapping("/health")
