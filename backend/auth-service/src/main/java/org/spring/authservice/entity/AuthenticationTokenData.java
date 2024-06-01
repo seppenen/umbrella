@@ -19,6 +19,6 @@ import java.io.Serializable;
 @Table(name = "authentication_token")
 public class AuthenticationTokenData implements Serializable {
     @Id
-    private String email;
     private String token;
+    private String email;
 }

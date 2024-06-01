@@ -5,7 +5,8 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.spring.authservice.service.LoggerService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -22,8 +23,7 @@ import java.util.Objects;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
-
-    private final LoggerService loggerService;
+    private static final Logger logger = LogManager.getLogger(GlobalExceptionHandlers.class);
 
     @ExceptionHandler({
             RuntimeException.class,
@@ -42,7 +42,7 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
     private ResponseStatusException processException(ServerWebExchange exchange, Exception ex) {
         ServerHttpResponse response = setResponseUnauthorized(exchange);
         String errorCode = Objects.requireNonNull(setResponseUnauthorized(exchange).getStatusCode()).toString();
-        loggerService.getInfoBuilder().withStatusCode(errorCode).withData(ex.getMessage()).log();
+        logger.error("Error code: " + errorCode + " - Error message: " + ex.getMessage(), ex);
         return new ResponseStatusException(response.getStatusCode(), ex.getMessage());
     }
 

@@ -1,10 +1,10 @@
 package org.spring.authservice.repository;
 
 import org.spring.authservice.entity.AccessTokenData;
-import org.springframework.data.keyvalue.repository.KeyValueRepository;
+import org.springframework.data.repository.CrudRepository;
 
 
-public interface AccessTokenRepository extends KeyValueRepository<AccessTokenData, Long> {
+public interface AccessTokenRepository extends CrudRepository<AccessTokenData, Long> {
 
 
 }

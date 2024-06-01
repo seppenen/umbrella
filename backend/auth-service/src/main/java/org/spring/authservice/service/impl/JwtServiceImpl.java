@@ -7,7 +7,6 @@ import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import org.spring.authservice.enums.TokenEnum;
 import org.spring.authservice.service.JwtService;
-import org.spring.authservice.service.LoggerService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +16,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class JwtServiceImpl implements JwtService {
     private static final Algorithm SECRET_KEY = Algorithm.HMAC256(TokenEnum.SECRET.getAsString());
-    private LoggerService loggerService;
 
 
     public Mono<String> generateToken(long expireTime, String type, String email) {
