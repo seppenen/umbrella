@@ -35,6 +35,15 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
         throw new UnsupportedOperationException("Not supported");
     }
 
+    /**
+     * This method is used to load the SecurityContext for a given ServerWebExchange.
+     * It extracts the authentication token from the request's authorization header and uses it to authenticate the user
+     * using the provided AuthenticationManager. If the authentication is successful, the method returns a Mono of type SecurityContext
+     * containing the authenticated user.
+     *
+     * @param serverWebExchange The ServerWebExchange object representing the current HTTP request/response context.
+     * @return A Mono of type SecurityContext representing the authenticated user.
+     */
     @Override
     public Mono<SecurityContext> load(ServerWebExchange serverWebExchange) {
         return Mono.just(serverWebExchange.getRequest())

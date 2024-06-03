@@ -14,6 +14,12 @@ public class AuthServiceImpl implements AuthService {
 
     private UserServiceClient userServiceClient;
 
+    /**
+     * Requests the authentication of a user.
+     *
+     * @param userCredentialDto The user credentials containing the email and password.
+     * @return A Mono that emits the authenticated user entity.
+     */
     public Mono<UserEntityDto> requestAuthenticatedUser(UserCredentialDto userCredentialDto) {
         return userServiceClient.requestUserAuthentication(userCredentialDto);
     }

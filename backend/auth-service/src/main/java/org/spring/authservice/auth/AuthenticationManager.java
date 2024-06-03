@@ -21,6 +21,12 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     private static final String DEFAULT_ROLE = "ROLE_USER";
     private final JwtService tokenService;
 
+    /**
+     * Authenticates the provided authentication object.
+     *
+     * @param authentication The authentication object to be authenticated.
+     * @return A Mono of type Authentication representing the authenticated authentication object.
+     */
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         return Mono.just(authentication.getCredentials().toString())

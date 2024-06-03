@@ -16,6 +16,13 @@ public abstract class BaseClientResolver {
     protected static final String HEADER_VALUE = "auth-service";
 
 
+    /**
+     * Handles WebClientResponseException and converts it into a ResponseStatusException.
+     *
+     * @param e the WebClientResponseException to handle
+     * @return the converted ResponseStatusException
+     * @throws HttpMessageNotReadableException if the JSON response body cannot be parsed
+     */
     public ResponseStatusException handle(WebClientResponseException e) {
         try {
             String respBody = e.getResponseBodyAsString();

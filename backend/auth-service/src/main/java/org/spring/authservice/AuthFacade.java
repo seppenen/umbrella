@@ -15,6 +15,12 @@ public class AuthFacade {
     private AuthService authService;
     private AuthTokenManager authTokenManager;
 
+    /**
+     * Obtains the refresh token and access token for an authenticated user.
+     *
+     * @param userCredentialDto the user's credentials
+     * @return a Mono emitting a TokenResponseEntity with the refresh token and access token
+     */
     public Mono<TokenResponseEntity> obtainTokensIfAuthenticated(UserCredentialDto userCredentialDto) {
         return authService.requestAuthenticatedUser(userCredentialDto)
                 .flatMap(userEntityDto -> authTokenManager.obtainTokens(userEntityDto.getEmail()))

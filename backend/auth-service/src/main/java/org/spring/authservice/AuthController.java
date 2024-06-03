@@ -36,6 +36,7 @@ public class AuthController extends BaseController {
     }
 
     @PostMapping("/authenticate")
+    //TODO: to implement redis cache for access token
     public Mono<Map<String, Boolean>> authenticate(@RequestBody UserCredentialDto userRequestDto, ServerWebExchange exchange) {
         Map<String, Boolean> authSuccessResponse = Collections.singletonMap(AUTH_SUCCESS_STATUS, true);
         return authFacade.obtainTokensIfAuthenticated(userRequestDto)

@@ -13,6 +13,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 class RedisConfig {
+    /**
+     * Creates and returns the ReactiveHashOperations object for performing operations on Redis hashes.
+     *
+     * @param redisConnectionFactory the ReactiveRedisConnectionFactory used to create the ReactiveRedisTemplate
+     * @return the ReactiveHashOperations object
+     */
     @Bean
     public ReactiveHashOperations<String, Long, AccessTokenData> hashOperations(ReactiveRedisConnectionFactory redisConnectionFactory) {
         var template = new ReactiveRedisTemplate<>(
