@@ -41,7 +41,7 @@ public class AuthController extends BaseController {
         Map<String, Boolean> authSuccessResponse = Collections.singletonMap(AUTH_SUCCESS_STATUS, true);
         return authFacade.obtainTokensIfAuthenticated(userRequestDto)
                 .flatMap(tokenResponseEntity -> buildResponseWithCookie(tokenResponseEntity, exchange))
-                .then(Mono.just(authSuccessResponse));
+                .then(send(authSuccessResponse));
     }
 
     @PostMapping("/access-token")

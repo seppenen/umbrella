@@ -17,6 +17,10 @@ public abstract class BaseController {
 
     private static final String STATUS = "status";
 
+    protected <T> Mono<T> send(T response) {
+        return Mono.just(response);
+    }
+
     protected Mono<Void> buildResponseWithCookie(TokenResponseEntity tokenResponseEntity, ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
         addCookieToResponse(REFRESH_TOKEN, tokenResponseEntity.refreshToken(), response);
