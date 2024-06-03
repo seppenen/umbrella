@@ -32,7 +32,8 @@ public class AuthController extends BaseController {
 
     @PostMapping("/authorize")
     public Mono<Map<String, Object>> generateDefaultSuccessResponse() {
-        return Mono.just(Map.of(AUTH_SUCCESS_STATUS, true, TOKEN_VALID, true));
+        Map <String, Object> response = Map.of(AUTH_SUCCESS_STATUS, true, TOKEN_VALID, true);
+        return send(response);
     }
 
     @PostMapping("/authenticate")
