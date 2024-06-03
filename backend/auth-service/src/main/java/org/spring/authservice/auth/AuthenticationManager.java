@@ -29,8 +29,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     }
 
     private Mono<Authentication> getAuthentication(AuthenticationTokenData appUser) {
-        return Mono.just(
-                new UsernamePasswordAuthenticationToken(appUser, null,
+        return Mono.just(new UsernamePasswordAuthenticationToken(appUser, null,
                         getGrantedAuthorities())
         );
     }
