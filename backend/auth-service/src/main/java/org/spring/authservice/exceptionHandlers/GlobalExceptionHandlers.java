@@ -40,16 +40,23 @@ public class GlobalExceptionHandlers extends ResponseEntityExceptionHandler {
     }
 
     private ResponseStatusException processException(ServerWebExchange exchange, Exception ex) {
-        ServerHttpResponse response = setResponseUnauthorized(exchange);
-        String errorCode = Objects.requireNonNull(setResponseUnauthorized(exchange).getStatusCode()).toString();
+        ServerHttpResponse response;
+        if (ex instanceof RuntimeException) {
+            response = setResponseStatus(exchange, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            response = setResponseStatus(exchange, HttpStatus.UNAUTHORIZED);
+        }
+        String errorCode = Objects.requireNonNull(response).toString();
         logger.error("Error code: " + errorCode + " - Error message: " + ex.getMessage(), ex);
         return new ResponseStatusException(response.getStatusCode(), ex.getMessage());
     }
 
-    private ServerHttpResponse setResponseUnauthorized(ServerWebExchange exchange) {
+    private ServerHttpResponse setResponseStatus(ServerWebExchange exchange, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.setStatusCode(httpStatus);
         return response;
     }
+
+
 }
 
