@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -31,9 +32,9 @@ public class AuthController extends BaseController {
     private final AuthFacade authFacade;
 
     @PostMapping("/authorize")
-    public Mono<Map<String, Object>> generateDefaultSuccessResponse() {
-        Map <String, Object> response = Map.of(AUTH_SUCCESS_STATUS, true, TOKEN_VALID, true);
-        return send(response);
+    public Flux<Map<String, Object>> generateDefaultSuccessResponse() {
+        Map<String, Object> response = Map.of(AUTH_SUCCESS_STATUS, true, TOKEN_VALID, true);
+        return sendFlux(response);
     }
 
     @PostMapping("/authenticate")
@@ -42,7 +43,7 @@ public class AuthController extends BaseController {
         Map<String, Boolean> authSuccessResponse = Collections.singletonMap(AUTH_SUCCESS_STATUS, true);
         return authFacade.obtainTokensIfAuthenticated(userRequestDto)
                 .flatMap(tokenResponseEntity -> buildResponseWithCookie(tokenResponseEntity, exchange))
-                .then(send(authSuccessResponse));
+                .then(sendMono(authSuccessResponse));
     }
 
     @PostMapping("/access-token")

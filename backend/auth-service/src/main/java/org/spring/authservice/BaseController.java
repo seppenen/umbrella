@@ -5,6 +5,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -17,8 +18,12 @@ public abstract class BaseController {
 
     private static final String STATUS = "status";
 
-    protected <T> Mono<T> send(T response) {
+    protected <T> Mono<T> sendMono(T response) {
         return Mono.just(response);
+    }
+
+    protected <T> Flux<T> sendFlux(T response) {
+        return Flux.just(response);
     }
 
     protected Mono<Void> buildResponseWithCookie(TokenResponseEntity tokenResponseEntity, ServerWebExchange exchange) {
@@ -31,7 +36,7 @@ public abstract class BaseController {
     private void addCookieToResponse(String cookieName, String cookieValue, ServerHttpResponse response) {
         ResponseCookie cookie = ResponseCookie.from(cookieName, cookieValue)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .build();
            response.addCookie(cookie);
