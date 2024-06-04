@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -31,10 +30,15 @@ public class AuthController extends BaseController {
     private final JwtService jwtService;
     private final AuthFacade authFacade;
 
+    /**
+     * Performs authorization if access token is valid and returns a Flux emitting a Map of response data.
+     *
+     * @return a Flux emitting a Map of response data
+     */
     @PostMapping("/authorize")
-    public Flux<Map<String, Object>> generateDefaultSuccessResponse() {
+    public Mono<Map<String, Object>> authorize() {
         Map<String, Object> response = Map.of(AUTH_SUCCESS_STATUS, true, TOKEN_VALID, true);
-        return sendFlux(response);
+        return sendMono(response);
     }
 
 
