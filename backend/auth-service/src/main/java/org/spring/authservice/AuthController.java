@@ -31,7 +31,7 @@ public class AuthController extends BaseController {
     private final AuthFacade authFacade;
 
     /**
-     * Performs authorization if access token is valid and returns a Flux emitting a Map of response data.
+     * Performs authorization and returns a Flux emitting a Map of response data if access token is valid.
      *
      * @return a Flux emitting a Map of response data
      */
