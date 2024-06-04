@@ -1,6 +1,6 @@
 package org.spring.authservice.config;
 
-import org.spring.authservice.entity.AccessTokenData;
+import org.spring.authservice.entity.AccessTokenEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
@@ -20,12 +20,12 @@ class RedisConfig {
      * @return the ReactiveHashOperations object
      */
     @Bean
-    public ReactiveHashOperations<String, Long, AccessTokenData> hashOperations(ReactiveRedisConnectionFactory redisConnectionFactory) {
+    public ReactiveHashOperations<String, Long, AccessTokenEntity> hashOperations(ReactiveRedisConnectionFactory redisConnectionFactory) {
         var template = new ReactiveRedisTemplate<>(
                 redisConnectionFactory,
-                RedisSerializationContext.<String, AccessTokenData>newSerializationContext(new StringRedisSerializer())
+                RedisSerializationContext.<String, AccessTokenEntity>newSerializationContext(new StringRedisSerializer())
                         .hashKey(new GenericToStringSerializer<>(Long.class))
-                        .hashValue(new Jackson2JsonRedisSerializer<>(AccessTokenData.class))
+                        .hashValue(new Jackson2JsonRedisSerializer<>(AccessTokenEntity.class))
                         .build());
         return template.opsForHash();
     }

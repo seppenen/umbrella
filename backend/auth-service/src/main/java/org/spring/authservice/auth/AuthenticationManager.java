@@ -2,7 +2,7 @@ package org.spring.authservice.auth;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.AllArgsConstructor;
-import org.spring.authservice.entity.AuthenticationTokenData;
+import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.service.JwtService;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +34,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
                 .flatMap(this::getAuthentication);
     }
 
-    private Mono<Authentication> getAuthentication(AuthenticationTokenData appUser) {
+    private Mono<Authentication> getAuthentication(TokenStateEntity appUser) {
         return Mono.just(new UsernamePasswordAuthenticationToken(appUser, null,
                         getGrantedAuthorities())
         );
@@ -44,14 +44,14 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
         return List.of(new SimpleGrantedAuthority(DEFAULT_ROLE));
     }
 
-    private Mono<AuthenticationTokenData> verifyToken(String token) {
+    private Mono<TokenStateEntity> verifyToken(String token) {
         return tokenService.validateToken(token)
                 .filter(decodedJWT -> decodedJWT.getIssuer() != null && !decodedJWT.getSignature().isEmpty())
                 .flatMap(tokenData -> getAppUser(tokenData, token));
     }
 
-    private Mono<AuthenticationTokenData> getAppUser(DecodedJWT decodedJWT, String token) {
-        return Mono.just(AuthenticationTokenData.builder()
+    private Mono<TokenStateEntity> getAppUser(DecodedJWT decodedJWT, String token) {
+        return Mono.just(TokenStateEntity.builder()
                 .email(decodedJWT.getClaim("principal").asString())
                 .token(token)
                 .build()

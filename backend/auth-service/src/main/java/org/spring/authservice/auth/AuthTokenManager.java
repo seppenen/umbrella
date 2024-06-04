@@ -1,75 +1,45 @@
 package org.spring.authservice.auth;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.spring.authservice.entity.AccessTokenData;
-import org.spring.authservice.entity.AuthenticationTokenData;
-import org.spring.authservice.enums.TokenEnum;
+import org.spring.authservice.entity.AccessTokenEntity;
+import org.spring.authservice.entity.TokenStateEntity;
 import org.spring.authservice.repository.AccessTokenRepository;
 import org.spring.authservice.repository.RefreshTokenRepository;
-import org.spring.authservice.service.JwtService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple3;
 
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class AuthTokenManager {
-    private JwtService jwtService;
-    private AccessTokenRepository accessTokenRepository;
-    private RefreshTokenRepository refreshtokenRepository;
-    private final ModelMapper mapper;
 
-    public void saveToken( AccessTokenData token) {
+    private AccessTokenRepository accessTokenRepository;
+    private RefreshTokenRepository refreshTokenRepository;
+
+    public void saveToken( AccessTokenEntity token) {
         accessTokenRepository.save(token);
     }
 
-    public Optional<AccessTokenData> getToken(Long id) {
+    public Optional<AccessTokenEntity> getToken(Long id) {
         return accessTokenRepository.findById(id);
     }
 
-
-
-    public Mono<Tuple3<String, String, String>> obtainTokens(String email) {
-        return Mono.zip(
-                        jwtService.generateToken(
-                                TokenEnum.REFRESH_TOKEN_EXPIRE_TIME.getAsInteger(),
-                                TokenEnum.REFRESH_TOKEN_TYPE.getAsString(),
-                                email),
-                        jwtService.generateToken(
-                                TokenEnum.ACCESS_TOKEN_EXPIRE_TIME.getAsInteger(),
-                                TokenEnum.ACCESS_TOKEN_TYPE.getAsString(),
-                                email),
-                        Mono.just(email)
-        );
+    public void persistRefreshToken(TokenStateEntity tokenStateEntity){
+        refreshTokenRepository.save(tokenStateEntity);
     }
 
-   /**
-    * Permanently persists the refresh token and access token data.
-    *
-    * @param tokens a Tuple3 containing the refresh token, access token, and email
-    * @return a Mono emitting Void
-    */
-   public Mono<Void> persistsTokens(Tuple3<String, String, String> tokens){
-        AuthenticationTokenData tokenStateEntity = new AuthenticationTokenData(tokens.getT2(),tokens.getT3());
-        refreshtokenRepository.save(tokenStateEntity);
-        AccessTokenData accessTokenDataToPersist = mapper.map(tokenStateEntity, AccessTokenData.class);
-        accessTokenRepository.save(accessTokenDataToPersist);
-        return Mono.empty();
+    public void persistAccessToken(AccessTokenEntity accessTokenEntity){
+        accessTokenRepository.save(accessTokenEntity);
     }
 
     @Transactional
-    public void updateRefreshToken(AuthenticationTokenData tokenStateEntity) {
-        AuthenticationTokenData tokenData = refreshtokenRepository.save(tokenStateEntity);
-        refreshtokenRepository.deleteAll(refreshtokenRepository.findByEmailAndTokenNot(tokenData.getEmail(), tokenData.getToken()));
+    public void updateRefreshToken(TokenStateEntity tokenStateEntity) {
+        TokenStateEntity tokenData = refreshTokenRepository.save(tokenStateEntity);
+        refreshTokenRepository.deleteAll(refreshTokenRepository.findByEmailAndTokenNot(tokenData.getEmail(), tokenData.getToken()));
     }
 
-
-    public Optional<AuthenticationTokenData> findRefreshToken(String token) {
-        return refreshtokenRepository.findByToken(token);
+    public Optional<TokenStateEntity> findRefreshToken(String token) {
+        return refreshTokenRepository.findByToken(token);
     }
-
 }

@@ -9,6 +9,7 @@ import org.spring.authservice.enums.TokenEnum;
 import org.spring.authservice.service.JwtService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple3;
 
 import java.util.Date;
 
@@ -17,6 +18,19 @@ import java.util.Date;
 public class JwtServiceImpl implements JwtService {
     private static final Algorithm SECRET_KEY = Algorithm.HMAC256(TokenEnum.SECRET.getAsString());
 
+    public Mono<Tuple3<String, String, String>> obtainTokens(String email) {
+        return Mono.zip(
+                generateToken(
+                        TokenEnum.REFRESH_TOKEN_EXPIRE_TIME.getAsInteger(),
+                        TokenEnum.REFRESH_TOKEN_TYPE.getAsString(),
+                        email),
+                generateToken(
+                        TokenEnum.ACCESS_TOKEN_EXPIRE_TIME.getAsInteger(),
+                        TokenEnum.ACCESS_TOKEN_TYPE.getAsString(),
+                        email),
+                Mono.just(email)
+        );
+    }
 
     public Mono<String> generateToken(long expireTime, String type, String email) {
         return Mono.just(JWT.create()

@@ -17,7 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name = "authentication_token")
-public class AuthenticationTokenData implements Serializable {
+public class TokenStateEntity implements Serializable {
     @Id
     private String token;
     private String email;

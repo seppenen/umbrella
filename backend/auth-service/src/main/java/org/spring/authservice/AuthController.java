@@ -42,7 +42,7 @@ public class AuthController extends BaseController {
     //TODO: to implement redis cache for access token
     public Mono<Map<String, Boolean>> authenticate(@RequestBody UserCredentialDto userRequestDto, ServerWebExchange exchange) {
         Map<String, Boolean> authSuccessResponse = Collections.singletonMap(AUTH_SUCCESS_STATUS, true);
-        return authFacade.obtainTokensIfAuthenticated(userRequestDto)
+        return authFacade.getTokensForAuthenticatedUser(userRequestDto)
                 .flatMap(tokens -> buildResponseWithCookie(tokens, exchange))
                 .then(sendMono(authSuccessResponse));
     }
