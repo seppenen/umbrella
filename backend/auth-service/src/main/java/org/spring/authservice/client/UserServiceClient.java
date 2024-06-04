@@ -23,6 +23,6 @@ public class UserServiceClient extends BaseClientResolver {
                 .bodyValue(userCredentialDto)
                 .retrieve()
                 .bodyToMono(UserEntityDto.class)
-                .onErrorMap(WebClientResponseException.class, this::handle);
+                .onErrorMap(WebClientResponseException.class, this::sendErrorResponse);
     }
 }

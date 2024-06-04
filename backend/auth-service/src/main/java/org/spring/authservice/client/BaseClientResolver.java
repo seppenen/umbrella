@@ -23,7 +23,7 @@ public abstract class BaseClientResolver {
      * @return the converted ResponseStatusException
      * @throws HttpMessageNotReadableException if the JSON response body cannot be parsed
      */
-    public ResponseStatusException handle(WebClientResponseException e) {
+    public ResponseStatusException sendErrorResponse(WebClientResponseException e) {
         try {
             String respBody = e.getResponseBodyAsString();
             if (!respBody.isBlank()) {
