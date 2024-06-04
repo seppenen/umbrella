@@ -31,12 +31,8 @@ public class AuthTokenManager {
         return accessTokenRepository.findById(id);
     }
 
-    /**
-     * Retrieves the refresh token, access token, and email for a given user.
-     *
-     * @param email the email of the user
-     * @return a Mono emitting a Tuple3 containing the refresh token, access token, and email
-     */
+
+
     public Mono<Tuple3<String, String, String>> obtainTokens(String email) {
         return Mono.zip(
                         jwtService.generateToken(
