@@ -1,7 +1,6 @@
 package org.spring.authservice;
 
 import lombok.AllArgsConstructor;
-import org.spring.authservice.auth.AuthTokenManager;
 import org.spring.authservice.dto.UserCredentialDto;
 import org.spring.authservice.entity.AccessTokenEntity;
 import org.spring.authservice.entity.TokenStateEntity;
@@ -18,7 +17,6 @@ public class AuthFacade {
 
     private AuthService authService;
     private JwtService jwtService;
-    private AuthTokenManager authTokenManager;
 
     /**
      * Generate and persist tokens for an authenticated user.
@@ -35,13 +33,13 @@ public class AuthFacade {
 
     private void persistAccessToken(Tuple3<String, String, String> tokens) {
         AccessTokenEntity accessTokenEntity = new AccessTokenEntity(null, tokens.getT2());
-        authTokenManager.persistAccessToken(accessTokenEntity);
+        authService.persistAccessToken(accessTokenEntity);
     }
 
     @Transactional
     public void persistAndEvictRefreshToken(Tuple3<String, String, String> tokens) {
         TokenStateEntity tokenStateEntity = new TokenStateEntity(tokens.getT1(), tokens.getT3());
-        authTokenManager.persistRefreshToken(tokenStateEntity);
-        authTokenManager.evictOldRefreshTokens(tokenStateEntity);
+        authService.persistRefreshToken(tokenStateEntity);
+        authService.evictOldRefreshTokens(tokenStateEntity);
     }
 }
