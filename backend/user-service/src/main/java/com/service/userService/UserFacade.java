@@ -1,6 +1,5 @@
 package com.service.userService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.userService.dto.UserLoginDto;
 import com.service.userService.dto.UserLoginResponseDto;
 import com.service.userService.dto.UserRequestDto;
@@ -8,6 +7,7 @@ import com.service.userService.dto.UserResponseDto;
 import com.service.userService.entity.UserEntity;
 import com.service.userService.service.UserService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +24,7 @@ public class UserFacade {
 
     private final UserService userService;
     private ReactiveAuthenticationManager authenticationManager;
-    private final ObjectMapper mapper;
+    private final ModelMapper mapper;
 
 
 
@@ -43,8 +43,9 @@ public class UserFacade {
     }
 
     public UserResponseDto registerUser(UserRequestDto userRequestDto) {
-        UserEntity userEntity = userService.registerUser(convert(userRequestDto, UserEntity.class));
-        return convert(userEntity, UserResponseDto.class);
+        UserEntity userEntityToPersist = convert(userRequestDto, UserEntity.class);
+        UserEntity persistedUserEntity = userService.save(userEntityToPersist);
+        return convert(persistedUserEntity, UserResponseDto.class);
     }
 
     public UserResponseDto getUser(Long id) {
@@ -58,6 +59,6 @@ public class UserFacade {
     }
 
     private <T, U> U convert(T source, Class<U> dest) {
-        return mapper.convertValue(source, dest);
+        return mapper.map(source, dest);
     }
 }

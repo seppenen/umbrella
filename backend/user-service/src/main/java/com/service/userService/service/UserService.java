@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService {
 
-    UserEntity registerUser(UserEntity userEntity);
+    UserEntity save(UserEntity userEntity);
 
     UserEntity getUser(Long id);
 

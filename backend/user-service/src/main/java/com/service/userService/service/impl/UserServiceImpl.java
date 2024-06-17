@@ -7,12 +7,12 @@ package com.service.userService.service.impl;
  */
 
 import com.service.userService.entity.UserEntity;
-import com.service.userService.exceptions.EntityPersistenceException;
 import com.service.userService.repository.UserRepository;
 import com.service.userService.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,22 +24,21 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final LoggerServiceImpl loggerService;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
+
     public static final String CREATED_MESSAGE = "User created successfully";
     private static final String USER_NOT_FOUND_MESSAGE = "User %s not found";
-    private static final String PASSWORD_NOT_MATCH_MESSAGE = "Password does not match for user: %s";
-
 
     @Override
-    public UserEntity registerUser(UserEntity userEntity) {
+    public UserEntity save(UserEntity userEntity) {
         try {
             userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
             UserEntity persistedUser = userRepository.save(userEntity);
-            loggerService.logInfo(CREATED_MESSAGE, HttpStatus.OK, persistedUser);
+            logger.info("{} with ID: {}.", CREATED_MESSAGE, persistedUser.getEmail());
             return persistedUser;
         } catch (Exception e) {
-            throw new EntityPersistenceException(e);
+            throw new RuntimeException(e);
         }
     }
 
