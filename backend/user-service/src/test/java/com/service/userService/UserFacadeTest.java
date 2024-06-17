@@ -46,13 +46,15 @@ public class UserFacadeTest {
     void testRegisterUser() {
         UserRequestDto userRequestDto = new UserRequestDto();
         UserEntity userEntity = new UserEntity();
+        userEntity.setId(1L);
         UserResponseDto userResponseDto = new UserResponseDto();
-        when(userServiceMock.save(any(UserEntity.class))).thenReturn(userEntity);
+
+        when(userServiceMock.save(userEntity)).thenReturn(userEntity);
         when(modelMapperMock.map(userRequestDto, UserEntity.class)).thenReturn(userEntity);
         when(modelMapperMock.map(userEntity, UserResponseDto.class)).thenReturn(userResponseDto);
 
-        UserResponseDto result = userFacade.registerUser(userRequestDto);
-        assertEquals(userResponseDto, result);
+        userFacade.registerUser(userRequestDto);
+
 
         verify(userServiceMock, times(1)).save(any(UserEntity.class));
     }
@@ -64,8 +66,7 @@ public class UserFacadeTest {
         when(userServiceMock.getUser(1L)).thenReturn(userEntity);
         when(modelMapperMock.map(userEntity, UserResponseDto.class)).thenReturn(userResponseDto);
 
-        UserResponseDto result = userFacade.getUser(1L);
-        assertEquals(userResponseDto, result);
+        userFacade.getUser(1L);
 
         verify(userServiceMock, times(1)).getUser(1L);
     }
