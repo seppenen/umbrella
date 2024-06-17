@@ -1,12 +1,16 @@
-import express from 'express';
+import express, {Express} from 'express';
+import {injectable} from 'inversify';
+import {Server} from 'http';
 
-const app = express();
-const port = 3000;
+@injectable()
+export class App {
+    app:Express
+    server:Server
+    port = process.env.PORT
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+    constructor() {
+        this.app = express();
+    }
 
-app.listen(port, () => {
-    return console.log(`Express is listening at http://localhost:${port}`);
-});
+}
+

@@ -4,3 +4,4 @@
 /backend/user-service/target/
 /frontend/umbrella/node_modules/
 /backend/transaction-service/node_modules/
+/backend/transaction-service/dist/
