@@ -1,28 +1,27 @@
 package org.umbrella.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.umbrella.entity.EntrepreneurEntity;
 import org.umbrella.repository.EntrepreneurRepository;
-import org.umbrella.service.EntrepreneurServiceInterface;
-import org.umbrella.service.LoggerService;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class EntrepreneurService implements EntrepreneurServiceInterface {
-    private static final String CREATED_MESSAGE_FORMAT = "Created entrepreneur with id: {0}";
+public class EntrepreneurServiceImpl implements org.umbrella.service.EntrepreneurService {
+    private static final String CREATED_MESSAGE_FORMAT = "Created entrepreneur with id: {}";
     private static final String NOT_FOUND_MESSAGE = "Entrepreneur not found";
-    private static final String DELETED_MESSAGE_FORMAT = "Deleted entrepreneur with id: {0}";
+    private static final String DELETED_MESSAGE_FORMAT = "Deleted entrepreneur with id: {}";
     private final EntrepreneurRepository entrepreneurRepository;
-    private final LoggerService loggerService;
+    private static final Logger logger = LoggerFactory.getLogger(EntrepreneurServiceImpl.class);
 
-    public EntrepreneurService( EntrepreneurRepository entrepreneurRepository, LoggerService loggerService) {
+
+    public EntrepreneurServiceImpl(EntrepreneurRepository entrepreneurRepository) {
         this.entrepreneurRepository = entrepreneurRepository;
-        this.loggerService = loggerService;
+
     }
 
     /**
@@ -34,8 +33,7 @@ public class EntrepreneurService implements EntrepreneurServiceInterface {
     @Override
     public EntrepreneurEntity persistEntrepreneurEntity(EntrepreneurEntity entrepreneurEntityToPersist) {
         EntrepreneurEntity createdEntity = entrepreneurRepository.save(entrepreneurEntityToPersist);
-        String logMessage = MessageFormat.format(CREATED_MESSAGE_FORMAT, createdEntity.getId());
-        loggerService.logInfo(logMessage, HttpStatus.CREATED, createdEntity);
+        logger.info(CREATED_MESSAGE_FORMAT, createdEntity.getId());
         return createdEntity;
     }
     /**
@@ -80,8 +78,7 @@ public class EntrepreneurService implements EntrepreneurServiceInterface {
                 .orElseThrow(this::throwNotFound);
         entrepreneur.setDeleted(true);
         entrepreneurRepository.save(entrepreneur);
-        String message = MessageFormat.format(DELETED_MESSAGE_FORMAT, entrepreneur.getId());
-        loggerService.logInfo(message, HttpStatus.OK, entrepreneur);
+        logger.info(DELETED_MESSAGE_FORMAT, entrepreneur.getId());
     }
 
     private Optional<EntrepreneurEntity> findEntityOrThrow(Long id) {

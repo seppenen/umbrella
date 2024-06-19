@@ -1,49 +1,46 @@
 package org.umbrella.client;
 
-import org.springframework.core.ParameterizedTypeReference;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.umbrella.service.JwtService;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.umbrella.exceptionHandlers.GlobalExceptionHandlers;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class AuthServiceClient extends BaseClient {
 
-    private final JwtService jwtService;
+
     private final WebClient authServerWebClient;
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandlers.class);
 
-    public AuthServiceClient(JwtService jwtService, WebClient authServerWebClient) {
-        this.jwtService = jwtService;
-        this.authServerWebClient = authServerWebClient;
-    }
 
 
     //TODO: Method used for testing purposes only
-    public Mono<Map<String, String>> requestToken() {
-        String token = jwtService.generateAccessToken();
-        return super.buildAuthServerWebClient(authServerWebClient, token)
-                .post()
-                .uri("/token")
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
-                });
-    }
+//    public Mono<Map<String, String>> requestToken() {
+//        String token = jwtService.generateAccessToken();
+//        return super.buildAuthServerWebClient(authServerWebClient, token)
+//                .post()
+//                .uri("/token")
+//                .retrieve()
+//                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
+//                });
+//    }
 
     public Mono<Boolean> validateToken(String token) {
         WebClient webClient = super.buildAuthServerWebClient(authServerWebClient, token);
+        //обработка WebClientRequestException
         return webClient.post()
-                .uri("/validate")
+                .uri("/authorize")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
-                .onErrorResume(e -> Mono.just(false));
-    }
-
-    private Mono<Boolean> isResponseStatus2xxSuccessful(ClientResponse response) {
-        return Mono.just(response.statusCode().is2xxSuccessful());
-    }
+                .onErrorResume(WebClientRequestException.class,
+                        e -> Mono.just(false));
+        }
 }
 
 

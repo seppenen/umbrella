@@ -4,50 +4,47 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.umbrella.client.AuthServiceClient;
-import org.umbrella.exceptions.SignatureInvalidException;
-import org.umbrella.service.JwtService;
-import org.umbrella.service.LoggerService;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import org.umbrella.auth.AuthToken;
+import org.umbrella.auth.AuthenticationManager;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Component
+@RequiredArgsConstructor
 public class AuthServiceFilter extends OncePerRequestFilter {
 
-    private final AuthServiceClient authServiceClient;
-    private final JwtService jwtService;
-
-    public AuthServiceFilter(AuthServiceClient authServiceClient, JwtService jwtService, LoggerService loggerService) {
-        this.authServiceClient = authServiceClient;
-        this.jwtService = jwtService;
-    }
+    private final AuthenticationManager authenticationManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain)
             throws ServletException, IOException {
-        String[] ignoredPaths = new String[] {"swagger-ui", "v3/api-docs", "api/v1/refresh-token", "api/v1/health"};
-        String path = request.getRequestURI();
-        boolean isIgnoredPath = Arrays.stream(ignoredPaths).anyMatch(path::contains);
 
-        if(!isIgnoredPath){
-            String bearerToken = jwtService.resolveToken(request);
-            validateAndHandleErrors(bearerToken);
+        String authHeader = request.getHeader("Authorization");
+
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring("Bearer ".length());
+            String userName = "alex@gmail.com"; // JwtUtils.extractUserName(token);
+            AuthToken authToken = new AuthToken(token, userName);
+            Authentication auth = null;
+            try {
+                auth = authenticationManager.authenticate(authToken);
+            } catch (AuthenticationException e) {
+                throw new RuntimeException(e);
+            }
+            if (auth != null) {
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
         }
+
         chain.doFilter(request, response);
     }
 
-    private void validateAndHandleErrors(String bearerToken){
-        authServiceClient.validateToken(bearerToken)
-                .filter(valid -> valid)
-                .switchIfEmpty(Mono.error(new SignatureInvalidException("Unauthorized")))
-                .publishOn(Schedulers.boundedElastic())
-                .then();
-    }
 }

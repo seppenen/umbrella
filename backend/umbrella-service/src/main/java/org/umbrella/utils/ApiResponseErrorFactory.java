@@ -1,4 +1,4 @@
-package org.umbrella.service;
+package org.umbrella.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

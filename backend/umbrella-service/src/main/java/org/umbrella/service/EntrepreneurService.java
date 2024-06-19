@@ -4,7 +4,7 @@ import org.umbrella.entity.EntrepreneurEntity;
 
 import java.util.List;
 
-public interface EntrepreneurServiceInterface {
+public interface EntrepreneurService {
 
     EntrepreneurEntity persistEntrepreneurEntity(EntrepreneurEntity entrepreneur);
     List<EntrepreneurEntity> getAllEntrepreneurs();

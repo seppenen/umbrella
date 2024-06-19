@@ -7,7 +7,7 @@ import org.umbrella.client.UserServiceClient;
 import org.umbrella.dto.EntrepreneurDto;
 import org.umbrella.dto.UserResponseDto;
 import org.umbrella.entity.EntrepreneurEntity;
-import org.umbrella.service.EntrepreneurServiceInterface;
+import org.umbrella.service.EntrepreneurService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ public class UmbrellaFacade {
 
     private final UserServiceClient userServiceClient;
     private final ModelMapper mapper;
-    private final EntrepreneurServiceInterface entrepreneurService;
+    private final EntrepreneurService entrepreneurService;
 
     /**
      * Retrieves the list of users from the User Service.

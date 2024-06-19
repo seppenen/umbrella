@@ -1,7 +1,7 @@
-package org.umbrella.configuration;
+package org.umbrella.config;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +17,12 @@ import org.umbrella.filters.AuthServiceFilter;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SpringSecurityConfiguration {
-    @Qualifier("delegatedAuthenticationEntryPoint")
-    DelegatedAuthenticationEntryPoint authenticationEntryPoint;
+@AllArgsConstructor
+public class SecurityConfig {
 
-    @Autowired
-    AuthServiceFilter authServiceFilter;
+    @Qualifier("delegatedAuthenticationEntryPoint")
+    private DelegatedAuthenticationEntryPoint authenticationEntryPoint;
+    private AuthServiceFilter authServiceFilter;
 
     /**
      * Configures and returns a SecurityFilterChain for the given HttpSecurity.
@@ -35,9 +35,11 @@ public class SpringSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+               // .authenticationManager(authenticationProvider)
+               // .authenticationProvider(tokenAuthenticationProvider)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/**")
-                        .permitAll()
+                        .requestMatchers("swagger-ui.html","/health/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/v1/**").authenticated()
                 )
                 .addFilterBefore(authServiceFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
@@ -47,5 +49,4 @@ public class SpringSecurityConfiguration {
                 );
         return http.build();
     }
-
 }
