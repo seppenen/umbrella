@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class AuthServiceClient extends BaseClient {
+public class AuthServiceClient extends BaseClientResolver {
 
 
     private final WebClient authServerWebClient;
