@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class UserServiceClient extends BaseClient {
+public class UserServiceClient extends BaseClientResolver {
 
     private final WebClient userServiceWebClient;
 
