@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig {
 
     @Value("${auth.server.url}")
-    String authServerUrl;
+    String authServiceUrl;
 
 
     private static final String PREFIX = "/api/v1";
@@ -17,7 +17,7 @@ public class WebClientConfig {
     @Bean
     public WebClient authServiceWebClient() {
         return WebClient.builder()
-                .baseUrl(authServerUrl + PREFIX)
+                .baseUrl(authServiceUrl + PREFIX)
                 .build();
     }
 }
