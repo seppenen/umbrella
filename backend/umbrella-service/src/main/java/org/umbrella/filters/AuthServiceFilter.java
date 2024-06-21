@@ -5,9 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.umbrella.auth.AuthToken;
@@ -20,30 +18,28 @@ import java.io.IOException;
 public class AuthServiceFilter extends OncePerRequestFilter {
 
     private final AuthenticationManager authenticationManager;
-
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        //TODO: implement headers without bearer prefix
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+        String authHeader = request.getHeader(AUTH_HEADER);
+
+        if(authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
             String token = authHeader.substring("Bearer ".length());
             String userName = "alex@gmail.com"; // JwtUtils.extractUserName(token);
             AuthToken authToken = new AuthToken(token, userName);
-            Authentication auth = null;
             try {
-                auth = authenticationManager.authenticate(authToken);
+                 authenticationManager.authenticate(authToken);
             } catch (AuthenticationException e) {
                 throw new RuntimeException(e);
             }
-            if (auth != null) {
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
         }
-
         chain.doFilter(request, response);
     }
 

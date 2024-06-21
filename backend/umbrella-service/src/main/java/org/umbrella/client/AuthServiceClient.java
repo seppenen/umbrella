@@ -33,9 +33,8 @@ public class AuthServiceClient extends BaseClient {
 //    }
 
     public Mono<Boolean> validateToken(String token) {
-        WebClient webClient = super.buildAuthServerWebClient(authServerWebClient, token);
-        //обработка WebClientRequestException
-        return webClient.post()
+        return buildServerWebClient(authServerWebClient, token)
+                .post()
                 .uri("/authorize")
                 .exchangeToMono(this::isResponseStatus2xxSuccessful)
                 .onErrorResume(WebClientRequestException.class,

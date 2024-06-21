@@ -17,14 +17,13 @@ public abstract class BaseClient {
     protected static final String HEADER_VALUE = "umbrella-service";
 
 
-    protected WebClient buildAuthServerWebClient(WebClient client, String token) {
+    protected WebClient buildServerWebClient(WebClient client, String token) {
         return client
                 .mutate()
-                .defaultHeader(AUTHORIZATION_HEADER, token)
+                .defaultHeader(AUTHORIZATION_HEADER, "Bearer " + token)
                 .defaultHeader(X_REQUEST_HEADER, HEADER_VALUE)
                 .build();
     }
-
     public ResponseStatusException sendErrorResponse(WebClientResponseException e) {
         HttpStatusCode statusCode = e.getStatusCode();
         String respBody = e.getResponseBodyAsString();

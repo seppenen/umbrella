@@ -15,7 +15,7 @@ public class UserServiceClient extends BaseClient {
     private final WebClient userServiceWebClient;
 
     public List<UserRequestDto> getUsers(String token) {
-        WebClient webClient = super.buildAuthServerWebClient(userServiceWebClient, token);
+        WebClient webClient = super.buildServerWebClient(userServiceWebClient, token);
         return webClient.get()
                 .uri("/users")
                 .retrieve()
@@ -23,3 +23,4 @@ public class UserServiceClient extends BaseClient {
                 }).block();
     }
 }
+

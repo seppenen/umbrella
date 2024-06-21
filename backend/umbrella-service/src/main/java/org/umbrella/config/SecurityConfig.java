@@ -38,7 +38,7 @@ public class SecurityConfig {
                // .authenticationManager(authenticationProvider)
                // .authenticationProvider(tokenAuthenticationProvider)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("swagger-ui.html","/health/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("swagger-ui.html","/api/v1/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/**").authenticated()
                 )
                 .addFilterBefore(authServiceFilter, UsernamePasswordAuthenticationFilter.class)
