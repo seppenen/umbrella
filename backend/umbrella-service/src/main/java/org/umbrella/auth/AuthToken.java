@@ -19,7 +19,6 @@ public class AuthToken extends AbstractAuthenticationToken {
         this.token = token;
     }
 
-
     @Override
     public Object getCredentials() {
         return token;
