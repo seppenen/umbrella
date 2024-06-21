@@ -24,8 +24,7 @@ import static org.spring.authservice.utility.TokenUtility.ACCESS_TOKEN;
 @CrossOrigin("*")
 @RequestMapping("/api/v1")
 public class AuthController extends BaseController {
-    private static final String TOKEN_VALID = "tokenValid";
-    private static final String AUTH_SUCCESS_STATUS = "authenticated";
+    private static final String AUTH_SUCCESS_STATUS = "auth";
 
     private final JwtService jwtService;
     private final AuthFacade authFacade;
@@ -37,7 +36,7 @@ public class AuthController extends BaseController {
      */
     @PostMapping("/authorize")
     public Mono<Map<String, Object>> authorize() {
-        Map<String, Object> response = Map.of(AUTH_SUCCESS_STATUS, true, TOKEN_VALID, true);
+        Map<String, Object> response = Collections.singletonMap(AUTH_SUCCESS_STATUS, true);
         return sendMono(response);
     }
 
